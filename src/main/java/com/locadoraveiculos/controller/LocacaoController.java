@@ -1,34 +1,176 @@
 package com.locadoraveiculos.controller;
 
 import com.locadoraveiculos.dao.LocacaoDAO;
+import com.locadoraveiculos.dao.VeiculoDAO;
+import com.locadoraveiculos.dao.ClienteDAO; // Para verificar se cliente existe
+import com.locadoraveiculos.exception.PersistenceException;
 import com.locadoraveiculos.model.Locacao;
+import com.locadoraveiculos.model.Veiculo;
+import com.locadoraveiculos.model.Cliente;
+
+
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 
 public class LocacaoController {
-
     private LocacaoDAO locacaoDAO;
+    private VeiculoDAO veiculoDAO;
+    private ClienteDAO clienteDAO;
 
     public LocacaoController() {
         this.locacaoDAO = new LocacaoDAO();
+        this.veiculoDAO = new VeiculoDAO();
+        this.clienteDAO = new ClienteDAO();
     }
 
-    public void createLocacao(Locacao locacao) {
-        locacaoDAO.create(locacao);
+    public boolean registrarLocacao(Locacao locacao) {
+        try {
+            // Validações de Negócio:
+            Cliente cliente = clienteDAO.buscarPorId(locacao.getIdCliente());
+            if (cliente == null) {
+                System.err.println("Erro ao registrar locação: Cliente com ID " + locacao.getIdCliente() + " não encontrado.");
+                return false;
+            }
+
+            Veiculo veiculo = veiculoDAO.buscarPorPlaca(locacao.getPlacaVeiculo());
+            if (veiculo == null) {
+                System.err.println("Erro ao registrar locação: Veículo com placa " + locacao.getPlacaVeiculo() + " não encontrado.");
+                return false;
+            }
+            if (!"disponivel".equalsIgnoreCase(veiculo.getStatusVeiculo())) {
+                System.err.println("Erro ao registrar locação: Veículo " + veiculo.getPlaca() + " não está disponível. Status: " + veiculo.getStatusVeiculo());
+                return false;
+            }
+
+            if (locacao.getDataRetirada() == null || locacao.getDataPrevistaDevolucao() == null) {
+                System.err.println("Erro ao registrar locação: Datas de retirada e devolução prevista são obrigatórias.");
+                return false;
+            }
+
+            if (locacao.getDataPrevistaDevolucao().before(locacao.getDataRetirada())) {
+                 System.err.println("Erro ao registrar locação: Data de devolução prevista não pode ser anterior à data de retirada.");
+                return false;
+            }
+            
+            if (locacao.getValorDiariaLocacao() == null || locacao.getValorDiariaLocacao().compareTo(BigDecimal.ZERO) <= 0) {
+                 System.err.println("Erro ao registrar locação: Valor da diária deve ser maior que zero.");
+                return false;
+            }
+
+            // Calcular valor total previsto (simples, sem considerar seguro, etc. por enquanto)
+            long diffInMillies = Math.abs(locacao.getDataPrevistaDevolucao().getTime() - locacao.getDataRetirada().getTime());
+            long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+            if (diffInDays == 0) diffInDays = 1; // Mínimo 1 dia de locação
+            
+            BigDecimal dias = new BigDecimal(diffInDays);
+            locacao.setValorTotalPrevisto(locacao.getValorDiariaLocacao().multiply(dias));
+
+
+            locacao.setStatusLocacao("ativa"); // Garante o status inicial
+            locacaoDAO.salvar(locacao);
+
+            // Atualiza o status do veículo para "locado"
+            veiculo.setStatusVeiculo("locado");
+            veiculoDAO.atualizar(veiculo);
+
+            System.out.println("INFO: Locação registrada com sucesso! ID: " + locacao.getIdLocacao() + 
+                               " para o cliente " + cliente.getNome() + " com o veículo " + veiculo.getMarca() + " " + veiculo.getModelo());
+            return true;
+
+        } catch (PersistenceException e) {
+            System.err.println("ERRO Controller: Erro ao registrar locação: " + e.getMessage());
+            return false;
+        } catch (Exception e) { // Captura outras exceções inesperadas
+            System.err.println("ERRO Controller: Erro inesperado ao registrar locação: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public Locacao buscarLocacaoPorId(int id) {
+        try {
+            return locacaoDAO.buscarPorId(id);
+        } catch (PersistenceException e) {
+            System.err.println("ERRO Controller: " + e.getMessage());
+            return null;
+        }
     }
 
-    public Locacao getLocacao(int id) {
-        return locacaoDAO.read(id);
+    public List<Locacao> listarTodasLocacoes() {
+        try {
+            return locacaoDAO.listarTodas();
+        } catch (PersistenceException e) {
+            System.err.println("ERRO Controller: Erro ao listar locações: " + e.getMessage());
+            return new ArrayList<>();
+        }
     }
 
-    public List<Locacao> getAllLocacoes() {
-        return locacaoDAO.readAll();
-    }
+    public boolean finalizarLocacao(int idLocacao, Date dataEfetivaDevolucao, String observacoesDevolucao) {
+        try {
+            Locacao locacao = locacaoDAO.buscarPorId(idLocacao);
+            if (locacao == null) {
+                System.err.println("Erro: Locação ID " + idLocacao + " não encontrada.");
+                return false;
+            }
+            if (!"ativa".equalsIgnoreCase(locacao.getStatusLocacao())) {
+                 System.err.println("Erro: Locação ID " + idLocacao + " não está ativa. Status atual: " + locacao.getStatusLocacao());
+                return false;
+            }
+            if (dataEfetivaDevolucao == null) {
+                System.err.println("Erro: Data efetiva de devolução é obrigatória.");
+                return false;
+            }
+            if (dataEfetivaDevolucao.before(locacao.getDataRetirada())) {
+                System.err.println("Erro: Data efetiva de devolução não pode ser anterior à data de retirada.");
+                return false;
+            }
 
-    public void updateLocacao(Locacao locacao) {
-        locacaoDAO.update(locacao);
-    }
+            locacao.setDataEfetivaDevolucao(dataEfetivaDevolucao);
+            locacao.setObservacoesDevolucao(observacoesDevolucao);
+            locacao.setStatusLocacao("finalizada"); // Ou "finalizada_com_pendencia" dependendo da lógica de multa
 
-    public void deleteLocacao(int id) {
-        locacaoDAO.delete(id);
+            // Lógica de cálculo de multa e valor final (simplificada)
+            long diffPrevistaMillis = Math.abs(locacao.getDataPrevistaDevolucao().getTime() - locacao.getDataRetirada().getTime());
+            long diasPrevistos = TimeUnit.DAYS.convert(diffPrevistaMillis, TimeUnit.MILLISECONDS);
+            if(diasPrevistos == 0) diasPrevistos = 1;
+
+            long diffEfetivaMillis = Math.abs(dataEfetivaDevolucao.getTime() - locacao.getDataRetirada().getTime());
+            long diasEfetivos = TimeUnit.DAYS.convert(diffEfetivaMillis, TimeUnit.MILLISECONDS);
+            if(diasEfetivos == 0) diasEfetivos = 1;
+            
+            BigDecimal valorBase = locacao.getValorDiariaLocacao().multiply(new BigDecimal(diasEfetivos));
+            
+            // Cálculo de multa simples se devolveu depois do previsto
+            if (dataEfetivaDevolucao.after(locacao.getDataPrevistaDevolucao())) {
+                long diasAtrasoMillis = Math.abs(dataEfetivaDevolucao.getTime() - locacao.getDataPrevistaDevolucao().getTime());
+                long diasAtraso = TimeUnit.DAYS.convert(diasAtrasoMillis, TimeUnit.MILLISECONDS);
+                // Supondo uma multa de 20% da diária por dia de atraso
+                BigDecimal multaPorDia = locacao.getValorDiariaLocacao().multiply(new BigDecimal("0.20"));
+                locacao.setValorMultaAtraso(multaPorDia.multiply(new BigDecimal(diasAtraso)));
+            } else {
+                locacao.setValorMultaAtraso(BigDecimal.ZERO);
+            }
+            
+            locacao.setValorTotalFinal(valorBase.add(locacao.getValorMultaAtraso()).add(locacao.getValorSeguro())); // Adicionar caução se aplicável e depois reembolsar diferença
+
+            locacaoDAO.atualizar(locacao);
+
+            // Atualizar status do veículo
+            Veiculo veiculo = veiculoDAO.buscarPorPlaca(locacao.getPlacaVeiculo());
+            if (veiculo != null) {
+                veiculo.setStatusVeiculo("disponivel"); // Ou "manutencao" dependendo das observações
+                veiculoDAO.atualizar(veiculo);
+            }
+            System.out.println("INFO: Locação ID " + idLocacao + " finalizada. Valor final: " + locacao.getValorTotalFinal());
+            return true;
+
+        } catch (PersistenceException e) {
+            System.err.println("ERRO Controller: Erro ao finalizar locação: " + e.getMessage());
+            return false;
+        }
     }
 }

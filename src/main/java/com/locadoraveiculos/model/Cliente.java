@@ -1,25 +1,43 @@
+package com.locadoraveiculos.model;
+
+import java.util.Date;
+
+/**
+ * Representa a entidade Cliente.
+ */
 public class Cliente {
-    private Long id;
+    private int idCliente;
     private String nome;
-    private String endereco;
+    private String cpf;
+    private String cnh;
+    private Date dataValidadeCnh; // java.util.Date
     private String telefone;
+    private String email;
+    private String enderecoRua;
+    private String enderecoNumero;
+    private String enderecoComplemento;
+    private String enderecoBairro;
+    private String enderecoCidade;
+    private String enderecoEstado;
+    private String enderecoCep;
 
     public Cliente() {
     }
 
-    public Cliente(Long id, String nome, String endereco, String telefone) {
-        this.id = id;
+    public Cliente(String nome, String cpf, String cnh, String email) {
         this.nome = nome;
-        this.endereco = endereco;
-        this.telefone = telefone;
+        this.cpf = cpf;
+        this.cnh = cnh;
+        this.email = email;
     }
 
-    public Long getId() {
-        return id;
+    // Getters e Setters
+    public int getIdCliente() {
+        return idCliente;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdCliente(int idCliente) {
+        this.idCliente = idCliente;
     }
 
     public String getNome() {
@@ -30,12 +48,28 @@ public class Cliente {
         this.nome = nome;
     }
 
-    public String getEndereco() {
-        return endereco;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getCnh() {
+        return cnh;
+    }
+
+    public void setCnh(String cnh) {
+        this.cnh = cnh;
+    }
+
+    public Date getDataValidadeCnh() {
+        return dataValidadeCnh;
+    }
+
+    public void setDataValidadeCnh(Date dataValidadeCnh) {
+        this.dataValidadeCnh = dataValidadeCnh;
     }
 
     public String getTelefone() {
@@ -44,5 +78,78 @@ public class Cliente {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEnderecoRua() {
+        return enderecoRua;
+    }
+
+    public void setEnderecoRua(String enderecoRua) {
+        this.enderecoRua = enderecoRua;
+    }
+
+    public String getEnderecoNumero() {
+        return enderecoNumero;
+    }
+
+    public void setEnderecoNumero(String enderecoNumero) {
+        this.enderecoNumero = enderecoNumero;
+    }
+
+    public String getEnderecoComplemento() {
+        return enderecoComplemento;
+    }
+
+    public void setEnderecoComplemento(String enderecoComplemento) {
+        this.enderecoComplemento = enderecoComplemento;
+    }
+
+    public String getEnderecoBairro() {
+        return enderecoBairro;
+    }
+
+    public void setEnderecoBairro(String enderecoBairro) {
+        this.enderecoBairro = enderecoBairro;
+    }
+
+    public String getEnderecoCidade() {
+        return enderecoCidade;
+    }
+
+    public void setEnderecoCidade(String enderecoCidade) {
+        this.enderecoCidade = enderecoCidade;
+    }
+
+    public String getEnderecoEstado() {
+        return enderecoEstado;
+    }
+
+    public void setEnderecoEstado(String enderecoEstado) {
+        this.enderecoEstado = enderecoEstado;
+    }
+
+    public String getEnderecoCep() {
+        return enderecoCep;
+    }
+
+    public void setEnderecoCep(String enderecoCep) {
+        this.enderecoCep = enderecoCep;
+    }
+
+    @Override
+    public String toString() {
+        return "Cliente ID: " + idCliente +
+               ", Nome: '" + nome + '\'' +
+               ", CPF: '" + cpf + '\'' +
+               ", CNH: '" + cnh + '\'' +
+               ", Email: '" + email + '\'';
     }
 }
