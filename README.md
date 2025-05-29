@@ -6,7 +6,7 @@
 - O software deverá ser criado utilizando a linguagem JAVA;
 - Basicamente, o software deve conter 04 funcionalidades básicas: **criar, ler, atualizar e deletar**;
 - O Banco de Dados a ser utilizado deverá ser o **MySQL**;
-- Para criar o contâiner docker com o banco de dados, basta rodar o seguinte comando no diretório raiz do projeto: **docker up -d** (É importante possuir o docker instalado!).
+- Para criar o contâiner docker com o banco de dados, basta rodar o seguinte comando no diretório raiz do projeto: **docker-compose up** (É importante possuir o docker instalado!).
 
 ### Pontos a serem avaliados
 - Software;
