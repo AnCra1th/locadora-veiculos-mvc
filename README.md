@@ -6,7 +6,7 @@
 - O software deverá ser criado utilizando a linguagem JAVA;
 - Basicamente, o software deve conter 04 funcionalidades básicas: **criar, ler, atualizar e deletar**;
 - O Banco de Dados a ser utilizado deverá ser o **MySQL**;
-- Para criar o contâiner docker com o banco de dados, basta rodar o seguinte comando no diretório raiz do projeto: **docker-compose up** (É importante possuir o docker instalado!).
+- Para criar o contâiner docker com o banco de dados, basta rodar o seguinte comando no diretório raiz do projeto: **docker compose up** (É importante possuir o docker instalado e de que as portas 3306:3306 estão liberadas para o container rodar!).
 
 ### Pontos a serem avaliados
 - Software;
@@ -19,6 +19,6 @@
 - 1° etapa do projeto em BD -> Montar o diagrama de entidades e relacionamentos (08/05);
 - 1° Etapa do projeto Testes (27/05);
 - 2° Etapa de BD (22/05);
-- 2° Etapa Testes (27/05);
+- 2° Etapa Testes (03/06);
 - 3° Etapa de BD (05/06) (SUBMISÃO DE CONSULTAS SQL);
 - 3° Etapa Testes (10/06) (AQUI SERÁ A APRESENTAÇÃO).
