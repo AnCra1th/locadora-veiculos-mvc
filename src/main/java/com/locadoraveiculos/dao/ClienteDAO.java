@@ -103,7 +103,14 @@ public class ClienteDAO {
                 cliente.setDataValidadeCnh(rs.getDate("data_validade_cnh"));
                 cliente.setTelefone(rs.getString("telefone"));
                 cliente.setEmail(rs.getString("email"));
-                // Preencher demais campos de endereço se necessário para a listagem
+                cliente.setEnderecoRua(rs.getString("endereco_rua"));
+                cliente.setEnderecoNumero(rs.getString("endereco_numero"));
+                cliente.setEnderecoComplemento(rs.getString("endereco_complemento"));
+                cliente.setEnderecoBairro(rs.getString("endereco_bairro"));
+                cliente.setEnderecoCidade(rs.getString("endereco_cidade"));
+                cliente.setEnderecoEstado(rs.getString("endereco_estado"));
+                cliente.setEnderecoCep(rs.getString("endereco_cep"));
+
                 clientes.add(cliente);
             }
         } catch (SQLException e) {
@@ -155,7 +162,7 @@ public class ClienteDAO {
             pstmt.setInt(1, idCliente);
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                // Não é necessariamente um erro se o cliente não existir, mas pode ser um aviso.
+                
                 System.out.println("Aviso: Nenhuma linha afetada ao tentar excluir cliente ID: " + idCliente + ". Cliente pode não existir.");
             }
         } catch (SQLException e) {

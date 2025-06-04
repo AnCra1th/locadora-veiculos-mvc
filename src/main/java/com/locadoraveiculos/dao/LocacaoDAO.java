@@ -47,7 +47,7 @@ public class LocacaoDAO {
 
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
-                    locacao.setIdLocacao(generatedKeys.getInt(1)); // CORRIGIDO AQUI
+                    locacao.setIdLocacao(generatedKeys.getInt(1)); 
                 } else {
                     throw new PersistenceException("Falha ao obter o ID gerado para a locação.");
                 }
@@ -108,7 +108,16 @@ public class LocacaoDAO {
                 locacao.setDataPrevistaDevolucao(rs.getTimestamp("data_prevista_devolucao"));
                 locacao.setStatusLocacao(rs.getString("status_locacao"));
                 locacao.setValorDiariaLocacao(rs.getBigDecimal("valor_diaria_locacao"));
-                // Adicionar mais campos se necessário para a visualização em lista
+                locacao.setValorCaucao(rs.getBigDecimal("valor_caucao"));
+                locacao.setValorSeguro(rs.getBigDecimal("valor_seguro"));
+                locacao.setValorMultaAtraso(rs.getBigDecimal("valor_multa_atraso"));
+                locacao.setValorTotalPrevisto(rs.getBigDecimal("valor_total_previsto"));
+                locacao.setValorTotalFinal(rs.getBigDecimal("valor_total_final"));
+                locacao.setObservacoesRetirada(rs.getString("observacoes_retirada"));
+                locacao.setObservacoesDevolucao(rs.getString("observacoes_devolucao"));
+                locacao.setIdFuncionarioDevolucao(rs.getObject("id_funcionario_devolucao", Integer.class));
+                locacao.setIdReserva(rs.getObject("id_reserva", Integer.class));
+
                 locacoes.add(locacao);
             }
         } catch (SQLException e) {
@@ -130,6 +139,7 @@ public class LocacaoDAO {
             pstmt.setInt(1, locacao.getIdCliente());
             pstmt.setString(2, locacao.getPlacaVeiculo());
             pstmt.setInt(3, locacao.getIdFuncionarioRetirada());
+
 
             if (locacao.getIdFuncionarioDevolucao() != null) {
                 pstmt.setInt(4, locacao.getIdFuncionarioDevolucao());
@@ -158,6 +168,7 @@ public class LocacaoDAO {
             pstmt.setString(16, locacao.getObservacoesRetirada());
             pstmt.setString(17, locacao.getObservacoesDevolucao());
             pstmt.setInt(18, locacao.getIdLocacao());
+            
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
