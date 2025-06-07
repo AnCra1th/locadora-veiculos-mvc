@@ -25,4 +25,6 @@
 
 
 ### Requisitos importantes para o programa funcionar devidamente durante a apresentação:
-- O banco de dados, ao ser criado como novo, usando o docker compose, está sem dados. É necessário colocar as categorias do veículo na tabela "categoria_veiculos" e cadastrar ao menos 1 (um) funcionário.
+- O banco de dados, ao ser criado como novo, usando o docker compose, está sem dados. **É necessário colocar as categorias do veículo na tabela "categoria_veiculos" e cadastrar ao menos 1 (um) funcionário na tabela "funcionario"**.
+
+- Rodar **"docker compose down"** e **"docker compose down -v"** para excluir o contâiner e volume do contâiner. Após isso, rodar o seguinte comando para criar e subir o contâiner com o banco de dados **"docker compose up -d --build"** (é necessário estar no mesmo diretório do arquivo docker-compose.yml).

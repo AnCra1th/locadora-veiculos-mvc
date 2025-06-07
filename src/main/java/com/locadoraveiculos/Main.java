@@ -247,7 +247,7 @@ public class Main {
         System.out.println("\n--- Cadastrar Novo Veículo ---");
         Veiculo veiculo = new Veiculo();
         veiculo.setPlaca(lerString("Placa (ex: BRA2E19): ").toUpperCase());
-        veiculo.setIdCategoriaVeiculo(lerOpcaoInteira("ID da Categoria do Veículo (ex: 1 para Popular): ")); // Idealmente, listar categorias aqui
+        veiculo.setIdCategoriaVeiculo(lerOpcaoInteira("ID da Categoria do Veículo (ex: 1 para Popular; 2 para Intermediário (Hatch e Sedan); 3 para executivo: ")); // Idealmente, listar categorias aqui
         veiculo.setModelo(lerString("Modelo: "));
         veiculo.setMarca(lerString("Marca: "));
         
