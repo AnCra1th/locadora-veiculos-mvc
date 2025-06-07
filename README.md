@@ -22,3 +22,7 @@
 - 2° Etapa Testes (03/06);
 - 3° Etapa de BD (05/06) (SUBMISÃO DE CONSULTAS SQL);
 - 3° Etapa Testes (10/06) (AQUI SERÁ A APRESENTAÇÃO).
+
+
+### Requisitos importantes para o programa funcionar devidamente durante a apresentação:
+- O banco de dados, ao ser criado como novo, usando o docker compose, está sem dados. É necessário colocar as categorias do veículo na tabela "categoria_veiculos" e cadastrar ao menos 1 (um) funcionário.
