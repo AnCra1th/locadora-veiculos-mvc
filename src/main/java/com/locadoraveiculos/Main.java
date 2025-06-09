@@ -1,13 +1,19 @@
 package com.locadoraveiculos;
 
+// Imports de componentes do sistema
 import com.locadoraveiculos.config.DatabaseConnection;
 import com.locadoraveiculos.controller.ClienteController;
 import com.locadoraveiculos.controller.LocacaoController;
 import com.locadoraveiculos.controller.VeiculoController;
+import com.locadoraveiculos.controller.CategoriaVeiculoController;
+import com.locadoraveiculos.controller.ReservaController;
 import com.locadoraveiculos.model.Cliente;
 import com.locadoraveiculos.model.Locacao;
 import com.locadoraveiculos.model.Veiculo;
+import com.locadoraveiculos.model.CategoriaVeiculo;
+import com.locadoraveiculos.model.Reserva;
 
+// Imports de utilitários Java
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,10 +22,19 @@ import java.util.List;
 import java.util.Scanner;
 import java.sql.SQLException;
 
+/**
+ * Classe principal para interação com o sistema de locadora via console.
+ * Atua como a camada de "View" (Visão) para este exemplo de aplicação.
+ */
 public class Main {
+    // Instanciação de todos os controllers necessários para a aplicação
     private static ClienteController clienteController = new ClienteController();
     private static VeiculoController veiculoController = new VeiculoController();
     private static LocacaoController locacaoController = new LocacaoController();
+    private static CategoriaVeiculoController categoriaVeiculoController = new CategoriaVeiculoController();
+    private static ReservaController reservaController = new ReservaController();
+
+    // Utilitários para entrada de dados e formatação de datas
     private static Scanner scanner = new Scanner(System.in);
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -28,13 +43,14 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Bem-vindo ao Sistema de Locadora de Veículos!");
         try {
-            DatabaseConnection.getConnection(); // Testa a conexão inicial
-             System.out.println("INFO: Conexão com o banco de dados estabelecida.");
+            // Tenta estabelecer a conexão com o banco de dados na inicialização
+            DatabaseConnection.getConnection();
+            System.out.println("INFO: Conexão com o banco de dados estabelecida.");
         } catch (SQLException e) {
             System.err.println("FALHA CRÍTICA: Não foi possível conectar ao banco de dados. Verifique as configurações e o servidor MySQL.");
             System.err.println("Detalhes do erro: " + e.getMessage());
             System.err.println("A aplicação será encerrada.");
-            return;
+            return; // Encerra a aplicação se não conseguir conectar
         }
 
         int opcao;
@@ -50,17 +66,20 @@ public class Main {
                     menuVeiculos();
                     break;
                 case 3:
-                    menuLocacoes();
+                    menuReservas(); // Nova opção
+                    break;
+                case 4:
+                    menuLocacoes(); // Ordem ajustada
                     break;
                 case 0:
-                    System.out.println("Saindo do sistema...");
+                    System.out.println("Encerrando o Sistema...");
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
             }
             if (opcao != 0) {
                 System.out.println("\nPressione Enter para continuar...");
-                scanner.nextLine(); // Pausa
+                scanner.nextLine(); // Pausa para o usuário ler a saída antes de mostrar o menu novamente
             }
         } while (opcao != 0);
 
@@ -68,6 +87,8 @@ public class Main {
         DatabaseConnection.closeConnection();
         System.out.println("INFO: Conexão com o banco de dados fechada. Sistema encerrado.");
     }
+
+    // --- MÉTODOS DE UTILIDADE PARA ENTRADA DE DADOS ---
 
     private static String lerString(String prompt) {
         System.out.print(prompt);
@@ -81,11 +102,11 @@ public class Main {
                 String input = scanner.nextLine();
                 return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Entrada inválida. Por favor, insira um número.");
+                System.out.println("Entrada inválida. Por favor, insira um número inteiro.");
             }
         }
     }
-    
+
     private static BigDecimal lerBigDecimal(String prompt) {
         while (true) {
             try {
@@ -107,21 +128,23 @@ public class Main {
             try {
                 return sdf.parse(input);
             } catch (ParseException e) {
-                System.out.println("Formato de data inválido. Use " + sdf.toPattern() + ".");
+                System.out.println("Formato de data inválido. Use o formato " + sdf.toPattern() + ".");
             }
         }
     }
 
+    // --- MENUS PRINCIPAIS E SUB-MENUS ---
 
     private static void exibirMenuPrincipal() {
         System.out.println("\n--- MENU PRINCIPAL ---");
         System.out.println("1. Gerenciar Clientes");
         System.out.println("2. Gerenciar Veículos");
-        System.out.println("3. Gerenciar Locações");
+        System.out.println("3. Gerenciar Reservas");
+        System.out.println("4. Gerenciar Locações");
         System.out.println("0. Sair");
     }
 
-    // --- MENUS CLIENTES ---
+    // --- SEÇÃO DE CLIENTES ---
     private static void menuClientes() {
         int opcao;
         do {
@@ -152,15 +175,8 @@ public class Main {
         cliente.setEmail(lerString("Email: "));
         cliente.setTelefone(lerString("Telefone (opcional): "));
         cliente.setDataValidadeCnh(lerData("Data de Validade CNH (dd/MM/yyyy, opcional): ", dateFormat));
-        // Endereço
         cliente.setEnderecoRua(lerString("Endereço - Rua (opcional): "));
         cliente.setEnderecoNumero(lerString("Endereço - Número (opcional): "));
-        cliente.setEnderecoComplemento(lerString("Endereço - Complemento (opcional): "));
-        cliente.setEnderecoBairro(lerString("Endereço - Bairro (opcional): "));
-        cliente.setEnderecoCidade(lerString("Endereço - Cidade (opcional): "));
-        cliente.setEnderecoEstado(lerString("Endereço - Estado (UF, opcional): "));
-        cliente.setEnderecoCep(lerString("Endereço - CEP (opcional): "));
-        
         clienteController.cadastrarCliente(cliente);
     }
 
@@ -180,38 +196,25 @@ public class Main {
         Cliente cliente = clienteController.buscarClientePorId(id);
         if (cliente != null) {
             System.out.println("Cliente encontrado: \n" + cliente);
-            // Exibir todos os campos do cliente aqui se desejar
         } else {
             System.out.println("Cliente com ID " + id + " não encontrado.");
         }
     }
-    
+
     private static void atualizarCliente() {
         System.out.println("\n--- Atualizar Cliente ---");
         int id = lerOpcaoInteira("ID do Cliente a ser atualizado: ");
         Cliente cliente = clienteController.buscarClientePorId(id);
-
         if (cliente == null) {
             System.out.println("Cliente com ID " + id + " não encontrado.");
             return;
         }
-
         System.out.println("Dados atuais: " + cliente);
         System.out.println("Deixe o campo em branco para não alterar o valor atual.");
-
         String nome = lerString("Novo Nome (" + cliente.getNome() + "): ");
         if (!nome.trim().isEmpty()) cliente.setNome(nome);
-        
         String email = lerString("Novo Email (" + cliente.getEmail() + "): ");
         if (!email.trim().isEmpty()) cliente.setEmail(email);
-
-        String telefone = lerString("Novo Telefone (" + (cliente.getTelefone()!=null ? cliente.getTelefone() : "") + "): ");
-        if (!telefone.trim().isEmpty()) cliente.setTelefone(telefone);
-        else if(cliente.getTelefone()!=null && telefone.trim().isEmpty() && lerString("Manter telefone atual? (S/N): ").equalsIgnoreCase("N")) cliente.setTelefone(null);
-
-
-        // Adicionar outros campos para atualização (CPF, CNH, Endereço, etc.)
-        
         clienteController.atualizarCliente(cliente);
     }
 
@@ -221,7 +224,7 @@ public class Main {
         clienteController.excluirCliente(id);
     }
 
-    // --- MENUS VEÍCULOS ---
+    // --- SEÇÃO DE VEÍCULOS ---
     private static void menuVeiculos() {
         int opcao;
         do {
@@ -246,11 +249,11 @@ public class Main {
     private static void cadastrarVeiculo() {
         System.out.println("\n--- Cadastrar Novo Veículo ---");
         Veiculo veiculo = new Veiculo();
-        veiculo.setPlaca(lerString("Placa (ex: BRA2E19): ").toUpperCase());
-        veiculo.setIdCategoriaVeiculo(lerOpcaoInteira("ID da Categoria do Veículo (ex: 1 para Popular; 2 para Intermediário (Hatch e Sedan); 3 para executivo: ")); // Idealmente, listar categorias aqui
+        veiculo.setPlaca(lerString("Placa (ex: BRA2E19): "));
+        listarCategorias();
+        veiculo.setIdCategoriaVeiculo(lerOpcaoInteira("ID da Categoria do Veículo: "));
         veiculo.setModelo(lerString("Modelo: "));
         veiculo.setMarca(lerString("Marca: "));
-        
         String anoStr = lerString("Ano de Fabricação (opcional): ");
         if (!anoStr.trim().isEmpty()) {
             try {
@@ -262,9 +265,8 @@ public class Main {
         veiculo.setCor(lerString("Cor (opcional): "));
         veiculo.setChassi(lerString("Chassi (opcional, 17 caracteres): "));
         veiculo.setRenavam(lerString("Renavam (opcional, 11 caracteres): "));
-        veiculo.setStatusVeiculo(lerString("Status Inicial (disponivel/manutencao/etc.): ").toLowerCase());
+        veiculo.setStatusVeiculo(lerString("Status Inicial (disponivel/manutencao/etc.): "));
         veiculo.setObservacoes(lerString("Observações (opcional): "));
-
         veiculoController.cadastrarVeiculo(veiculo);
     }
 
@@ -277,62 +279,124 @@ public class Main {
             veiculos.forEach(System.out::println);
         }
     }
-    
+
     private static void buscarVeiculo() {
         System.out.println("\n--- Buscar Veículo por Placa ---");
-        String placa = lerString("Placa do Veículo: ").toUpperCase();
+        String placa = lerString("Placa do Veículo: ");
         Veiculo veiculo = veiculoController.buscarVeiculoPorPlaca(placa);
         if (veiculo != null) {
             System.out.println("Veículo encontrado: " + veiculo);
-            // Mostrar mais detalhes
-            System.out.println("  ID Categoria: " + veiculo.getIdCategoriaVeiculo());
-            System.out.println("  Cor: " + (veiculo.getCor() != null ? veiculo.getCor() : "N/A"));
-            System.out.println("  Chassi: " + (veiculo.getChassi() != null ? veiculo.getChassi() : "N/A"));
-            System.out.println("  Renavam: " + (veiculo.getRenavam() != null ? veiculo.getRenavam() : "N/A"));
-            System.out.println("  Observações: " + (veiculo.getObservacoes() != null ? veiculo.getObservacoes() : "N/A"));
-
         } else {
             System.out.println("Veículo com placa " + placa + " não encontrado.");
         }
     }
-    
+
     private static void atualizarVeiculo() {
         System.out.println("\n--- Atualizar Veículo ---");
-        String placa = lerString("Placa do Veículo a ser atualizado: ").toUpperCase();
+        String placa = lerString("Placa do Veículo a ser atualizado: ");
         Veiculo veiculo = veiculoController.buscarVeiculoPorPlaca(placa);
-
         if (veiculo == null) {
             System.out.println("Veículo com placa " + placa + " não encontrado.");
             return;
         }
         System.out.println("Dados atuais: " + veiculo);
         System.out.println("Deixe o campo em branco para não alterar o valor atual.");
-
         String modelo = lerString("Novo Modelo (" + veiculo.getModelo() + "): ");
         if (!modelo.trim().isEmpty()) veiculo.setModelo(modelo);
-        
-        String marca = lerString("Nova Marca (" + veiculo.getMarca() + "): ");
-        if (!marca.trim().isEmpty()) veiculo.setMarca(marca);
-
         String status = lerString("Novo Status (" + veiculo.getStatusVeiculo() + "): ");
         if (!status.trim().isEmpty()) veiculo.setStatusVeiculo(status.toLowerCase());
-        
-        String obs = lerString("Novas Observações (" + (veiculo.getObservacoes()!=null ? veiculo.getObservacoes() : "") + "): ");
-         if (!obs.trim().isEmpty()) veiculo.setObservacoes(obs);
-        else if(veiculo.getObservacoes()!=null && obs.trim().isEmpty() && lerString("Manter observações atuais? (S/N): ").equalsIgnoreCase("N")) veiculo.setObservacoes(null);
-
-        // Adicionar outros campos para atualização (ID Categoria, Ano, Cor, Chassi, Renavam)
-        
         veiculoController.atualizarVeiculo(veiculo);
     }
 
     private static void excluirVeiculo() {
         System.out.println("\n--- Excluir Veículo ---");
-        String placa = lerString("Placa do Veículo a ser excluído: ").toUpperCase();
+        String placa = lerString("Placa do Veículo a ser excluído: ");
         veiculoController.excluirVeiculo(placa);
     }
 
-    // --- MENUS LOCAÇÕES ---
+    // --- SEÇÃO DE RESERVAS ---
+    private static void menuReservas() {
+        int opcao;
+        do {
+            System.out.println("\n--- Gerenciar Reservas ---");
+            System.out.println("1. Criar Nova Reserva");
+            System.out.println("2. Listar Todas as Reservas");
+            System.out.println("3. Buscar Reserva por ID");
+            System.out.println("4. Cancelar Reserva");
+            System.out.println("0. Voltar ao Menu Principal");
+            opcao = lerOpcaoInteira("Escolha uma opção: ");
+            switch (opcao) {
+                case 1: criarReserva(); break;
+                case 2: listarReservas(); break;
+                case 3: buscarReserva(); break;
+                case 4: cancelarReserva(); break;
+            }
+        } while (opcao != 0);
+    }
+    
+    private static void listarCategorias() {
+        System.out.println("\n--- Categorias de Veículo Disponíveis ---");
+        List<CategoriaVeiculo> categorias = categoriaVeiculoController.listarTodasCategorias();
+        if (categorias.isEmpty()) {
+            System.out.println("Nenhuma categoria cadastrada no sistema.");
+        } else {
+            for (CategoriaVeiculo categoria : categorias) {
+                System.out.println("ID: " + categoria.getIdCategoriaVeiculo() + " - " + categoria.getNomeCategoria() + " (Diária base: R$" + categoria.getValorDiariaBase() + ")");
+            }
+        }
+    }
+
+    private static void criarReserva() {
+        System.out.println("\n--- Criar Nova Reserva ---");
+        listarCategorias();
+        if (categoriaVeiculoController.listarTodasCategorias().isEmpty()) {
+            System.out.println("Não é possível criar uma reserva pois não há categorias de veículo cadastradas.");
+            return;
+        }
+        Reserva reserva = new Reserva();
+        reserva.setIdCliente(lerOpcaoInteira("ID do Cliente: "));
+        reserva.setIdCategoriaVeiculo(lerOpcaoInteira("ID da Categoria do Veículo desejada: "));
+        int idFuncionario = lerOpcaoInteira("ID do Funcionário que está registrando (opcional, 0 para nenhum): ");
+        if (idFuncionario != 0) {
+            reserva.setIdFuncionario(idFuncionario);
+        }
+        reserva.setDataPrevistaRetirada(lerData("Data e Hora Prevista de Retirada (dd/MM/yyyy HH:mm): ", dateTimeFormat));
+        if (reserva.getDataPrevistaRetirada() == null) { System.out.println("Data de retirada é obrigatória."); return; }
+        reserva.setDataPrevistaDevolucao(lerData("Data e Hora Prevista de Devolução (dd/MM/yyyy HH:mm): ", dateTimeFormat));
+        if (reserva.getDataPrevistaDevolucao() == null) { System.out.println("Data prevista de devolução é obrigatória."); return; }
+        reserva.setValorSinalReserva(lerBigDecimal("Valor do Sinal da Reserva (opcional, deixe em branco para 0.00): "));
+        reserva.setObservacoes(lerString("Observações (opcional): "));
+        reservaController.criarReserva(reserva);
+    }
+
+    private static void listarReservas() {
+        System.out.println("\n--- Lista de Reservas ---");
+        List<Reserva> reservas = reservaController.listarTodasReservas();
+        if (reservas.isEmpty()) {
+            System.out.println("Nenhuma reserva encontrada.");
+        } else {
+            reservas.forEach(System.out::println);
+        }
+    }
+
+    private static void buscarReserva() {
+        System.out.println("\n--- Buscar Reserva por ID ---");
+        int id = lerOpcaoInteira("ID da Reserva: ");
+        Reserva reserva = reservaController.buscarReservaPorId(id);
+        if (reserva != null) {
+            System.out.println("Reserva encontrada: " + reserva);
+        } else {
+            System.out.println("Reserva com ID " + id + " não encontrada.");
+        }
+    }
+
+    private static void cancelarReserva() {
+        System.out.println("\n--- Cancelar Reserva ---");
+        int id = lerOpcaoInteira("ID da Reserva a ser cancelada: ");
+        reservaController.cancelarReserva(id);
+    }
+
+    // --- SEÇÃO DE LOCAÇÕES ---
     private static void menuLocacoes() {
         int opcao;
         do {
@@ -356,29 +420,23 @@ public class Main {
         System.out.println("\n--- Registrar Nova Locação ---");
         int idCliente = lerOpcaoInteira("ID do Cliente: ");
         String placaVeiculo = lerString("Placa do Veículo: ").toUpperCase();
-        int idFuncionarioRetirada = lerOpcaoInteira("ID do Funcionário (Retirada): "); // Em um sistema real, viria do login/sessão
-        
+        int idFuncionarioRetirada = lerOpcaoInteira("ID do Funcionário (Retirada): ");
         Date dataRetirada = lerData("Data e Hora de Retirada (dd/MM/yyyy HH:mm): ", dateTimeFormat);
         if (dataRetirada == null) { System.out.println("Data de retirada é obrigatória."); return; }
-
         Date dataPrevistaDevolucao = lerData("Data e Hora Prevista de Devolução (dd/MM/yyyy HH:mm): ", dateTimeFormat);
-         if (dataPrevistaDevolucao == null) { System.out.println("Data prevista de devolução é obrigatória."); return; }
-
+        if (dataPrevistaDevolucao == null) { System.out.println("Data prevista de devolução é obrigatória."); return; }
         BigDecimal valorDiaria = lerBigDecimal("Valor da Diária da Locação: ");
         if (valorDiaria == null || valorDiaria.compareTo(BigDecimal.ZERO) <= 0) { System.out.println("Valor da diária é obrigatório e deve ser positivo."); return;}
-
         BigDecimal valorCaucao = lerBigDecimal("Valor do Caução (opcional, deixe em branco para 0.00): ");
         BigDecimal valorSeguro = lerBigDecimal("Valor do Seguro (opcional, deixe em branco para 0.00): ");
         String obsRetirada = lerString("Observações da Retirada (opcional): ");
-        
         Locacao locacao = new Locacao(idCliente, placaVeiculo, idFuncionarioRetirada, dataRetirada, dataPrevistaDevolucao, valorDiaria);
         if(valorCaucao != null) locacao.setValorCaucao(valorCaucao);
         if(valorSeguro != null) locacao.setValorSeguro(valorSeguro);
         locacao.setObservacoesRetirada(obsRetirada);
-        
         locacaoController.registrarLocacao(locacao);
     }
-    
+
     private static void listarLocacoes() {
         System.out.println("\n--- Lista de Locações ---");
         List<Locacao> locacoes = locacaoController.listarTodasLocacoes();
@@ -395,22 +453,6 @@ public class Main {
         Locacao locacao = locacaoController.buscarLocacaoPorId(id);
         if (locacao != null) {
             System.out.println("Locação encontrada: " + locacao);
-            System.out.println("  Cliente ID: " + locacao.getIdCliente());
-            System.out.println("  Veículo Placa: " + locacao.getPlacaVeiculo());
-            System.out.println("  Funcionário Retirada ID: " + locacao.getIdFuncionarioRetirada());
-            System.out.println("  Data Retirada: " + (locacao.getDataRetirada() != null ? dateTimeFormat.format(locacao.getDataRetirada()) : "N/A"));
-            System.out.println("  Data Prev. Devolução: " + (locacao.getDataPrevistaDevolucao() != null ? dateTimeFormat.format(locacao.getDataPrevistaDevolucao()) : "N/A"));
-            System.out.println("  Data Efet. Devolução: " + (locacao.getDataEfetivaDevolucao() != null ? dateTimeFormat.format(locacao.getDataEfetivaDevolucao()) : "N/A"));
-            System.out.println("  Valor Diária: " + locacao.getValorDiariaLocacao());
-            System.out.println("  Valor Caução: " + locacao.getValorCaucao());
-            System.out.println("  Valor Seguro: " + locacao.getValorSeguro());
-            System.out.println("  Valor Multa Atraso: " + locacao.getValorMultaAtraso());
-            System.out.println("  Valor Total Previsto: " + locacao.getValorTotalPrevisto());
-            System.out.println("  Valor Total Final: " + locacao.getValorTotalFinal());
-            System.out.println("  Status: " + locacao.getStatusLocacao());
-            System.out.println("  Obs. Retirada: " + (locacao.getObservacoesRetirada() != null ? locacao.getObservacoesRetirada() : "N/A"));
-            System.out.println("  Obs. Devolução: " + (locacao.getObservacoesDevolucao() != null ? locacao.getObservacoesDevolucao() : "N/A"));
-
         } else {
             System.out.println("Locação com ID " + id + " não encontrada.");
         }
@@ -419,12 +461,9 @@ public class Main {
     private static void finalizarLocacao() {
         System.out.println("\n--- Finalizar Locação ---");
         int idLocacao = lerOpcaoInteira("ID da Locação a ser finalizada: ");
-        
         Date dataEfetivaDevolucao = lerData("Data e Hora Efetiva de Devolução (dd/MM/yyyy HH:mm): ", dateTimeFormat);
         if (dataEfetivaDevolucao == null) { System.out.println("Data efetiva de devolução é obrigatória."); return; }
-
         String obsDevolucao = lerString("Observações da Devolução (avarias, km, etc. - opcional): ");
-
         locacaoController.finalizarLocacao(idLocacao, dataEfetivaDevolucao, obsDevolucao);
     }
 }
