@@ -24,7 +24,7 @@ import java.sql.SQLException;
 
 /**
  * Classe principal para interação com o sistema de locadora via console.
- * Atua como a camada de "View" (Visão) para este exemplo de aplicação.
+ * Atua como a camada de "View" (Visão) da aplicação.
  */
 public class Main {
     // Instanciação de todos os controllers necessários para a aplicação

@@ -10,8 +10,6 @@ Thumbs.db
 hs_err_pid*
 
 # Diretório de build do Maven
-# Contém todas as classes compiladas, JARs, WARs, relatórios, etc.
-# Este diretório é gerado pelo Maven e não deve ser versionado.
 target/
 
 # Arquivos de configuração de IDEs populares
@@ -23,11 +21,7 @@ target/
 *.iws
 out/
 
-# Eclipse
-.classpath
-.project
-.settings/
-bin/  # Algumas configurações mais antigas do Eclipse podem usar 'bin' para classes compiladas
+
 
 # NetBeans
 nbproject/
@@ -37,21 +31,10 @@ dist/
 # Visual Studio Code (VS Code)
 .vscode/
 
-# Arquivos de dependências baixadas localmente (se você não estiver usando um wrapper do Maven
-# e tiver um diretório local de libs não gerenciado pelo Maven - geralmente não é o caso com Maven)
-# lib/
-# libs/
+
 
 # Arquivos temporários ou de backup de editores
 *~
 *.swp
 *.swo
 
-# Arquivos de configuração pessoal ou local (se houver)
-# Exemplo: local.properties
-
-# Se você estiver usando SQLite ou outro banco de dados embarcado para testes locais
-# e não quiser versionar o arquivo do banco:
-# *.db
-# *.sqlite
-# *.sqlite3

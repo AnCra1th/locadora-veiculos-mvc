@@ -3,19 +3,20 @@ version: '3.8'
 services:
   db_locadora: # Nome do serviço do banco de dados
     image: mysql:latest
-    container_name: locadora_mysql_db # Nome específico para o contêiner
+    container_name: locadora_mysql_db # Nome do contêiner
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root # Mantenha ou altere conforme sua necessidade
-      MYSQL_DATABASE: locadora_veiculos # Nome do banco que será criado/usado
+      MYSQL_ROOT_PASSWORD: root 
+      MYSQL_DATABASE: locadora_veiculos # Nome do Banco de Dados
     ports:
       - "3306:3306" # Mapeia a porta 3306 do host para a 3306 do contêiner
     volumes:
       # Volume para persistência dos dados do MySQL
       - dados_db_locadora:/var/lib/mysql
-      # Monta a pasta contendo seu script SQL para inicialização do banco
-      # O caminho ./src/main/resources/db é relativo à localização do docker-compose.yml
+
+      # Monta a pasta contendo o script SQL para inicialização do banco
       - ./src/main/resources/db:/docker-entrypoint-initdb.d
+
     networks:
       - locadora_app_network
 
