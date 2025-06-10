@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db_locadora: # Nome do serviço do banco de dados
     image: mysql:latest
