@@ -4,6 +4,12 @@
 -- ------------------------------------------------------
 -- Server version	8.0.42-0ubuntu0.24.04.1
 
+-- MySQL dump 10.13  Distrib 8.0.42, for Linux (x86_64)
+--
+-- Host: localhost    Database: locadora_veiculos
+-- ------------------------------------------------------
+-- Server version	8.0.42-0ubuntu0.24.04.1
+
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -19,227 +25,205 @@
 -- Table structure for table `categoria_veiculo`
 --
 
-DROP TABLE IF EXISTS `categoria_veiculo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `categoria_veiculo` (
-  `id_categoria_veiculo` int NOT NULL AUTO_INCREMENT,
-  `nome_categoria` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descricao` text COLLATE utf8mb4_unicode_ci,
-  `valor_diaria_base` decimal(10,2) NOT NULL,
+-- Garante que o script pare em caso de erro e use a codificação correta.
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema locadora_veiculos
+-- -----------------------------------------------------
+-- Cria o banco de dados apenas se ele não existir, para evitar erros.
+CREATE SCHEMA IF NOT EXISTS `locadora_veiculos` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ;
+USE `locadora_veiculos` ;
+
+-- -----------------------------------------------------
+-- Tabela `categoria_veiculo`
+-- Armazena as categorias dos veículos (ex: Popular, SUV, Luxo).
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `categoria_veiculo` (
+  `id_categoria_veiculo` INT NOT NULL AUTO_INCREMENT,
+  `nome_categoria` VARCHAR(50) NOT NULL,
+  `descricao` TEXT NULL,
+  `valor_diaria_base` DECIMAL(10,2) NOT NULL,
   PRIMARY KEY (`id_categoria_veiculo`),
-  UNIQUE KEY `nome_categoria` (`nome_categoria`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `nome_categoria_UNIQUE` (`nome_categoria` ASC) VISIBLE)
+ENGINE = InnoDB;
 
---
--- Table structure for table `cliente`
---
 
-DROP TABLE IF EXISTS `cliente`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `cliente` (
-  `id_cliente` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cpf` varchar(14) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cnh` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `data_validade_cnh` date DEFAULT NULL,
-  `telefone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `endereco_rua` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `endereco_numero` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `endereco_complemento` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `endereco_bairro` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `endereco_cidade` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `endereco_estado` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `endereco_cep` varchar(9) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+-- -----------------------------------------------------
+-- Tabela `cliente`
+-- Armazena os dados dos clientes da locadora.
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `cliente` (
+  `id_cliente` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(150) NOT NULL,
+  `cpf` VARCHAR(14) NOT NULL,
+  `cnh` VARCHAR(20) NOT NULL,
+  `data_validade_cnh` DATE NULL,
+  `telefone` VARCHAR(20) NULL,
+  `email` VARCHAR(100) NULL,
+  `endereco_rua` VARCHAR(200) NULL,
+  `endereco_numero` VARCHAR(10) NULL,
+  `endereco_complemento` VARCHAR(100) NULL,
+  `endereco_bairro` VARCHAR(100) NULL,
+  `endereco_cidade` VARCHAR(100) NULL,
+  `endereco_estado` VARCHAR(2) NULL,
+  `endereco_cep` VARCHAR(9) NULL,
   PRIMARY KEY (`id_cliente`),
-  UNIQUE KEY `cpf` (`cpf`),
-  UNIQUE KEY `cnh` (`cnh`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `cpf_UNIQUE` (`cpf` ASC) VISIBLE,
+  UNIQUE INDEX `cnh_UNIQUE` (`cnh` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
+ENGINE = InnoDB;
 
---
--- Table structure for table `funcionario`
---
 
-DROP TABLE IF EXISTS `funcionario`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `funcionario` (
-  `id_funcionario` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `cpf` varchar(14) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `telefone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+-- -----------------------------------------------------
+-- Tabela `funcionario`
+-- Armazena os dados dos funcionários que operam o sistema.
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `funcionario` (
+  `id_funcionario` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(150) NOT NULL,
+  `cpf` VARCHAR(14) NOT NULL,
+  `telefone` VARCHAR(20) NULL,
+  `email` VARCHAR(100) NULL,
   PRIMARY KEY (`id_funcionario`),
-  UNIQUE KEY `cpf` (`cpf`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  UNIQUE INDEX `cpf_UNIQUE` (`cpf` ASC) VISIBLE,
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
+ENGINE = InnoDB;
 
---
--- Table structure for table `locacao`
---
 
-DROP TABLE IF EXISTS `locacao`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `locacao` (
-  `id_locacao` int NOT NULL AUTO_INCREMENT,
-  `id_cliente` int NOT NULL,
-  `placa_veiculo` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_funcionario_retirada` int NOT NULL,
-  `id_funcionario_devolucao` int DEFAULT NULL,
-  `id_reserva` int DEFAULT NULL,
-  `data_retirada` datetime NOT NULL,
-  `data_prevista_devolucao` datetime NOT NULL,
-  `data_efetiva_devolucao` datetime DEFAULT NULL,
-  `valor_diaria_locacao` decimal(10,2) NOT NULL,
-  `valor_caucao` decimal(10,2) DEFAULT '0.00',
-  `valor_seguro` decimal(10,2) DEFAULT '0.00',
-  `valor_multa_atraso` decimal(10,2) DEFAULT '0.00',
-  `valor_total_previsto` decimal(10,2) DEFAULT NULL,
-  `valor_total_final` decimal(10,2) DEFAULT NULL,
-  `status_locacao` enum('ativa','finalizada','finalizada_com_pendencia','cancelada') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'ativa',
-  `observacoes_retirada` text COLLATE utf8mb4_unicode_ci,
-  `observacoes_devolucao` text COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id_locacao`),
-  UNIQUE KEY `id_reserva` (`id_reserva`),
-  KEY `id_cliente` (`id_cliente`),
-  KEY `placa_veiculo` (`placa_veiculo`),
-  KEY `id_funcionario_retirada` (`id_funcionario_retirada`),
-  KEY `id_funcionario_devolucao` (`id_funcionario_devolucao`),
-  CONSTRAINT `locacao_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
-  CONSTRAINT `locacao_ibfk_2` FOREIGN KEY (`placa_veiculo`) REFERENCES `veiculo` (`placa`),
-  CONSTRAINT `locacao_ibfk_3` FOREIGN KEY (`id_funcionario_retirada`) REFERENCES `funcionario` (`id_funcionario`),
-  CONSTRAINT `locacao_ibfk_4` FOREIGN KEY (`id_funcionario_devolucao`) REFERENCES `funcionario` (`id_funcionario`),
-  CONSTRAINT `locacao_ibfk_5` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `pagamento`
---
-
-DROP TABLE IF EXISTS `pagamento`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `pagamento` (
-  `id_pagamento` int NOT NULL AUTO_INCREMENT,
-  `id_locacao` int DEFAULT NULL,
-  `id_reserva` int DEFAULT NULL,
-  `id_funcionario` int DEFAULT NULL,
-  `valor_pagamento` decimal(10,2) NOT NULL,
-  `data_pagamento` datetime DEFAULT CURRENT_TIMESTAMP,
-  `forma_pagamento` enum('dinheiro','cartao_credito','cartao_debito','pix','boleto','transferencia','caucao_reserva','caucao_locacao') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `descricao` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `numero_parcelas` int DEFAULT '1',
-  `status_pagamento` enum('pendente','aprovado','recusado','estornado','processando') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'aprovado',
-  PRIMARY KEY (`id_pagamento`),
-  KEY `id_locacao` (`id_locacao`),
-  KEY `id_reserva` (`id_reserva`),
-  KEY `id_funcionario` (`id_funcionario`),
-  CONSTRAINT `pagamento_ibfk_1` FOREIGN KEY (`id_locacao`) REFERENCES `locacao` (`id_locacao`) ON DELETE SET NULL,
-  CONSTRAINT `pagamento_ibfk_2` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`) ON DELETE SET NULL,
-  CONSTRAINT `pagamento_ibfk_3` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `reembolso`
---
-
-DROP TABLE IF EXISTS `reembolso`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `reembolso` (
-  `id_reembolso` int NOT NULL AUTO_INCREMENT,
-  `id_pagamento_original` int DEFAULT NULL,
-  `id_locacao` int DEFAULT NULL,
-  `id_reserva` int DEFAULT NULL,
-  `id_funcionario` int DEFAULT NULL,
-  `valor_reembolso` decimal(10,2) NOT NULL,
-  `data_reembolso` datetime DEFAULT CURRENT_TIMESTAMP,
-  `forma_reembolso` enum('dinheiro','transferencia','estorno_cartao','credito_loja') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `motivo_reembolso` text COLLATE utf8mb4_unicode_ci,
-  `status_reembolso` enum('solicitado','aprovado','processando','efetuado','recusado') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'solicitado',
-  PRIMARY KEY (`id_reembolso`),
-  KEY `id_pagamento_original` (`id_pagamento_original`),
-  KEY `id_locacao` (`id_locacao`),
-  KEY `id_reserva` (`id_reserva`),
-  KEY `id_funcionario` (`id_funcionario`),
-  CONSTRAINT `reembolso_ibfk_1` FOREIGN KEY (`id_pagamento_original`) REFERENCES `pagamento` (`id_pagamento`) ON DELETE SET NULL,
-  CONSTRAINT `reembolso_ibfk_2` FOREIGN KEY (`id_locacao`) REFERENCES `locacao` (`id_locacao`) ON DELETE SET NULL,
-  CONSTRAINT `reembolso_ibfk_3` FOREIGN KEY (`id_reserva`) REFERENCES `reserva` (`id_reserva`) ON DELETE SET NULL,
-  CONSTRAINT `reembolso_ibfk_4` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `reserva`
---
-
-DROP TABLE IF EXISTS `reserva`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `reserva` (
-  `id_reserva` int NOT NULL AUTO_INCREMENT,
-  `id_cliente` int NOT NULL,
-  `id_categoria_veiculo` int NOT NULL,
-  `id_funcionario` int DEFAULT NULL,
-  `data_reserva` datetime DEFAULT CURRENT_TIMESTAMP,
-  `data_prevista_retirada` datetime NOT NULL,
-  `data_prevista_devolucao` datetime NOT NULL,
-  `valor_estimado` decimal(10,2) DEFAULT NULL,
-  `valor_sinal_reserva` decimal(10,2) DEFAULT '0.00',
-  `status_reserva` enum('pendente_pagamento_sinal','confirmada','cancelada_cliente','cancelada_sistema','nao_compareceu','utilizada') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'pendente_pagamento_sinal',
-  `observacoes` text COLLATE utf8mb4_unicode_ci,
-  PRIMARY KEY (`id_reserva`),
-  KEY `id_cliente` (`id_cliente`),
-  KEY `id_categoria_veiculo` (`id_categoria_veiculo`),
-  KEY `id_funcionario` (`id_funcionario`),
-  CONSTRAINT `reserva_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `cliente` (`id_cliente`),
-  CONSTRAINT `reserva_ibfk_2` FOREIGN KEY (`id_categoria_veiculo`) REFERENCES `categoria_veiculo` (`id_categoria_veiculo`),
-  CONSTRAINT `reserva_ibfk_3` FOREIGN KEY (`id_funcionario`) REFERENCES `funcionario` (`id_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `veiculo`
---
-
-DROP TABLE IF EXISTS `veiculo`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `veiculo` (
-  `placa` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `id_categoria_veiculo` int NOT NULL,
-  `modelo` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `marca` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ano_fabricacao` int DEFAULT NULL,
-  `cor` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `chassi` varchar(17) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `renavam` varchar(11) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status_veiculo` enum('disponivel','locado','reservado','manutencao','inativo') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'disponivel',
-  `observacoes` text COLLATE utf8mb4_unicode_ci,
+-- -----------------------------------------------------
+-- Tabela `veiculo`
+-- Armazena os dados de cada veículo individual da frota.
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `veiculo` (
+  `placa` VARCHAR(10) NOT NULL,
+  `id_categoria_veiculo` INT NOT NULL,
+  `modelo` VARCHAR(50) NOT NULL,
+  `marca` VARCHAR(50) NOT NULL,
+  `ano_fabricacao` INT NULL,
+  `cor` VARCHAR(30) NULL,
+  `chassi` VARCHAR(17) NULL,
+  `renavam` VARCHAR(11) NULL,
+  `status_veiculo` ENUM('disponivel', 'locado', 'reservado', 'manutencao', 'inativo') NOT NULL DEFAULT 'disponivel',
+  `observacoes` TEXT NULL,
   PRIMARY KEY (`placa`),
-  UNIQUE KEY `chassi` (`chassi`),
-  UNIQUE KEY `renavam` (`renavam`),
-  KEY `id_categoria_veiculo` (`id_categoria_veiculo`),
-  CONSTRAINT `veiculo_ibfk_1` FOREIGN KEY (`id_categoria_veiculo`) REFERENCES `categoria_veiculo` (`id_categoria_veiculo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+  UNIQUE INDEX `chassi_UNIQUE` (`chassi` ASC) VISIBLE,
+  UNIQUE INDEX `renavam_UNIQUE` (`renavam` ASC) VISIBLE,
+  INDEX `fk_veiculo_categoria_veiculo_idx` (`id_categoria_veiculo` ASC) VISIBLE,
+  CONSTRAINT `fk_veiculo_categoria_veiculo`
+    FOREIGN KEY (`id_categoria_veiculo`)
+    REFERENCES `categoria_veiculo` (`id_categoria_veiculo`)
+    ON DELETE RESTRICT ON UPDATE CASCADE)
+ENGINE = InnoDB;
 
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- -----------------------------------------------------
+-- Tabela `reserva`
+-- Armazena as reservas de uma CATEGORIA de veículo para um cliente.
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `reserva` (
+  `id_reserva` INT NOT NULL AUTO_INCREMENT,
+  `id_cliente` INT NOT NULL,
+  `id_categoria_veiculo` INT NOT NULL,
+  `id_funcionario` INT NULL,
+  `data_reserva` DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
+  `data_prevista_retirada` DATETIME NOT NULL,
+  `data_prevista_devolucao` DATETIME NOT NULL,
+  `valor_estimado` DECIMAL(10,2) NULL,
+  `valor_sinal_reserva` DECIMAL(10,2) NULL DEFAULT '0.00',
+  `status_reserva` ENUM('pendente_pagamento_sinal', 'confirmada', 'cancelada_cliente', 'cancelada_sistema', 'nao_compareceu', 'utilizada') NOT NULL DEFAULT 'pendente_pagamento_sinal',
+  `observacoes` TEXT NULL,
+  PRIMARY KEY (`id_reserva`),
+  INDEX `fk_reserva_cliente_idx` (`id_cliente` ASC) VISIBLE,
+  INDEX `fk_reserva_categoria_veiculo_idx` (`id_categoria_veiculo` ASC) VISIBLE,
+  INDEX `fk_reserva_funcionario_idx` (`id_funcionario` ASC) VISIBLE,
+  CONSTRAINT `fk_reserva_cliente`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `cliente` (`id_cliente`)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_reserva_categoria_veiculo`
+    FOREIGN KEY (`id_categoria_veiculo`)
+    REFERENCES `categoria_veiculo` (`id_categoria_veiculo`)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_reserva_funcionario`
+    FOREIGN KEY (`id_funcionario`)
+    REFERENCES `funcionario` (`id_funcionario`)
+    ON DELETE SET NULL ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Tabela `locacao`
+-- Armazena os dados de uma locação efetiva de um VEÍCULO específico.
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `locacao` (
+  `id_locacao` INT NOT NULL AUTO_INCREMENT,
+  `id_cliente` INT NOT NULL,
+  `placa_veiculo` VARCHAR(10) NOT NULL,
+  `id_funcionario_retirada` INT NOT NULL,
+  `id_funcionario_devolucao` INT NULL,
+  `id_reserva` INT NULL,
+  `data_retirada` DATETIME NOT NULL,
+  `data_prevista_devolucao` DATETIME NOT NULL,
+  `data_efetiva_devolucao` DATETIME NULL,
+  `valor_diaria_locacao` DECIMAL(10,2) NOT NULL,
+  `valor_caucao` DECIMAL(10,2) NULL DEFAULT '0.00',
+  `valor_seguro` DECIMAL(10,2) NULL DEFAULT '0.00',
+  `valor_multa_atraso` DECIMAL(10,2) NULL DEFAULT '0.00',
+  `valor_total_previsto` DECIMAL(10,2) NULL,
+  `valor_total_final` DECIMAL(10,2) NULL,
+  `status_locacao` ENUM('ativa', 'finalizada', 'finalizada_com_pendencia', 'cancelada') NOT NULL DEFAULT 'ativa',
+  `observacoes_retirada` TEXT NULL,
+  `observacoes_devolucao` TEXT NULL,
+  PRIMARY KEY (`id_locacao`),
+  UNIQUE INDEX `id_reserva_UNIQUE` (`id_reserva` ASC) VISIBLE,
+  INDEX `fk_locacao_cliente_idx` (`id_cliente` ASC) VISIBLE,
+  INDEX `fk_locacao_veiculo_idx` (`placa_veiculo` ASC) VISIBLE,
+  INDEX `fk_locacao_funcionario_retirada_idx` (`id_funcionario_retirada` ASC) VISIBLE,
+  INDEX `fk_locacao_funcionario_devolucao_idx` (`id_funcionario_devolucao` ASC) VISIBLE,
+  CONSTRAINT `fk_locacao_cliente`
+    FOREIGN KEY (`id_cliente`)
+    REFERENCES `cliente` (`id_cliente`)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_locacao_veiculo`
+    FOREIGN KEY (`placa_veiculo`)
+    REFERENCES `veiculo` (`placa`)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_locacao_funcionario_retirada`
+    FOREIGN KEY (`id_funcionario_retirada`)
+    REFERENCES `funcionario` (`id_funcionario`)
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT `fk_locacao_funcionario_devolucao`
+    FOREIGN KEY (`id_funcionario_devolucao`)
+    REFERENCES `funcionario` (`id_funcionario`)
+    ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_locacao_reserva`
+    FOREIGN KEY (`id_reserva`)
+    REFERENCES `reserva` (`id_reserva`)
+    ON DELETE SET NULL ON UPDATE CASCADE)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- -----------------------------------------------------
+-- DADOS INICIAIS (AMOSTRA)
+-- Adiciona dados iniciais para que a aplicação não comece vazia.
+-- -----------------------------------------------------
+INSERT INTO `categoria_veiculo` (`nome_categoria`, `descricao`, `valor_diaria_base`) VALUES
+('Popular', 'Veículos econômicos que cabem no seu bolso', 100.00),
+('Executivo', 'Veículos executivos confortáveis e profissionais', 250.00),
+('SUV', 'Veículos utilitários esportivos para toda a família', 300.00);
+
+INSERT INTO `funcionario` (`nome`, `cpf`, `telefone`, `email`) VALUES
+('Geraldo de Rívia', '11122233344', '11999998888', 'geraldo.rivia@locadora.com'),
+('Eva Lakatos', '55566677788', '11977776666', 'eva.lakatos@locadora.com');
+
+-- Dump completed on 2025-05-22 23:25:31
+
 
 -- Dump completed on 2025-05-22 23:25:31
