@@ -1,3 +1,4 @@
+package com.locadoraveiculos;
 import com.locadoraveiculos.dao.ReservaDAO;
 import com.locadoraveiculos.model.Reserva;
 import com.locadoraveiculos.service.ReservaService;

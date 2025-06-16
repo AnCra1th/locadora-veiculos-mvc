@@ -1,3 +1,4 @@
+package com.locadoraveiculos;
 
 import com.locadoraveiculos.dao.LocacaoDAO;
 import com.locadoraveiculos.model.Locacao;

@@ -1,3 +1,4 @@
+package com.locadoraveiculos;
 import com.locadoraveiculos.dao.CategoriaVeiculoDAO;
 import com.locadoraveiculos.model.CategoriaVeiculo;
 import com.locadoraveiculos.service.CategoriaVeiculoService;
