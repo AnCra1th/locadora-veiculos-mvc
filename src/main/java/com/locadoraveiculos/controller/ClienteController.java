@@ -28,14 +28,11 @@ public class ClienteController {
                 System.err.println("Erro de validação: CNH do cliente não pode ser vazia.");
                 return false;
             }
-            // Adicionar mais validações se necessário (ex: formato de CPF, CNH, email)
-
             clienteDAO.salvar(cliente);
             System.out.println("INFO: Cliente '" + cliente.getNome() + "' cadastrado com sucesso! ID: " + cliente.getIdCliente());
             return true;
         } catch (PersistenceException e) {
             System.err.println("ERRO Controller: Erro ao cadastrar cliente: " + e.getMessage());
-            // e.getCause().printStackTrace(); // Para ver o stack trace da SQLException original
             return false;
         }
     }
@@ -64,7 +61,6 @@ public class ClienteController {
                  System.err.println("Erro de validação: ID do cliente inválido para atualização.");
                 return false;
             }
-            // Adicionar validações para os campos a serem atualizados, se necessário
             clienteDAO.atualizar(cliente);
             System.out.println("INFO: Cliente ID " + cliente.getIdCliente() + " atualizado com sucesso!");
             return true;
@@ -84,7 +80,7 @@ public class ClienteController {
             System.out.println("INFO: Cliente ID " + id + " excluído (ou tentativa de exclusão registrada).");
             return true;
         } catch (PersistenceException e) {
-            System.err.println("ERRO Controller: " + e.getMessage()); // A mensagem já vem formatada do DAO
+            System.err.println("ERRO Controller: " + e.getMessage());
             return false;
         }
     }

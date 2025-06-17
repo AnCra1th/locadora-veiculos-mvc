@@ -12,7 +12,6 @@ hs_err_pid*
 # Diretório de build do Maven
 target/
 
-# Arquivos de configuração de IDEs populares
 
 # IntelliJ IDEA
 .idea/

@@ -8,9 +8,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para a entidade Reserva.
- */
 public class ReservaDAO {
 
     public void salvar(Reserva reserva) {
@@ -48,7 +45,6 @@ public class ReservaDAO {
                 }
             }
         } catch (SQLException e) {
-            // Um tratamento de erro mais específico pode ser adicionado aqui, como fizemos no VeiculoDAO
             throw new PersistenceException("Erro ao salvar reserva: " + e.getMessage(), e);
         }
     }

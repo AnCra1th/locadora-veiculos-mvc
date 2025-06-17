@@ -166,7 +166,7 @@ public class ClienteDAO {
                 System.out.println("Aviso: Nenhuma linha afetada ao tentar excluir cliente ID: " + idCliente + ". Cliente pode não existir.");
             }
         } catch (SQLException e) {
-            if (e.getSQLState().startsWith("23")) { // Integrity constraint violation
+            if (e.getSQLState().startsWith("23")) {
                 throw new PersistenceException("Não é possível excluir o cliente ID " + idCliente + " pois ele possui registros associados (ex: locações).", e);
             }
             throw new PersistenceException("Erro ao excluir cliente ID " + idCliente + ": " + e.getMessage(), e);

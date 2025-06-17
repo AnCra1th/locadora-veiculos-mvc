@@ -1,5 +1,5 @@
 package com.locadoraveiculos;
-// src/test/java/com/locadoraveiculos/service/ClienteServiceTest.java
+
 
 import com.locadoraveiculos.dao.ClienteDAO;
 import com.locadoraveiculos.exception.PersistenceException;

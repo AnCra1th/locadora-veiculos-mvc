@@ -18,7 +18,7 @@ public class ReservaServiceTest {
         dao = Mockito.mock(ReservaDAO.class);
         service = new ReservaService(dao);
 
-        // Cria uma reserva válida para os testes
+        
         reservaValida = new Reserva();
         reservaValida.setIdCliente(1);
         reservaValida.setIdCategoriaVeiculo(1);
@@ -30,21 +30,21 @@ public class ReservaServiceTest {
     @DisplayName("Deve registrar uma reserva com dados válidos")
     void testRegistrarReservaValida() {
         Assertions.assertTrue(service.registrarReserva(reservaValida));
-        // Verifica se o método 'salvar' do DAO foi chamado
+        
         Mockito.verify(dao).salvar(reservaValida);
     }
 
     @Test
     @DisplayName("Não deve registrar reserva com ID de cliente inválido")
     void testRegistrarReservaInvalida() {
-        reservaValida.setIdCliente(0); // Cliente inválido
+        reservaValida.setIdCliente(0); 
         Assertions.assertFalse(service.registrarReserva(reservaValida));
     }
     
     @Test
     @DisplayName("Não deve registrar reserva com data de devolução anterior à retirada")
     void testRegistrarReservaComDataInvalida() {
-        reservaValida.setDataPrevistaDevolucao(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))); // Data inválida
+        reservaValida.setDataPrevistaDevolucao(new Date(System.currentTimeMillis() - TimeUnit.DAYS.toMillis(1))); 
         Assertions.assertFalse(service.registrarReserva(reservaValida));
     }
 }

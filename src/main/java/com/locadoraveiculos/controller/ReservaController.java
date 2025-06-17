@@ -7,9 +7,6 @@ import com.locadoraveiculos.model.Reserva;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Controller para gerenciar operações relacionadas a Reservas.
- */
 public class ReservaController {
     private ReservaDAO reservaDAO;
 
@@ -19,7 +16,6 @@ public class ReservaController {
 
     public boolean criarReserva(Reserva reserva) {
         try {
-            // Validações de Negócio
             if (reserva.getIdCliente() == 0 || reserva.getIdCategoriaVeiculo() == 0) {
                 System.err.println("Erro de validação: Cliente e Categoria do Veículo são obrigatórios.");
                 return false;
@@ -33,9 +29,8 @@ public class ReservaController {
                 return false;
             }
 
-            // Define um status inicial padrão
             if (reserva.getStatusReserva() == null || reserva.getStatusReserva().isEmpty()) {
-                reserva.setStatusReserva("confirmada"); // ou "pendente_pagamento_sinal"
+                reserva.setStatusReserva("confirmada");
             }
 
             reservaDAO.salvar(reserva);
@@ -73,7 +68,6 @@ public class ReservaController {
                 return false;
             }
             
-            // Lógica para verificar se a reserva pode ser cancelada
             String statusAtual = reserva.getStatusReserva();
             if ("utilizada".equalsIgnoreCase(statusAtual) || "cancelada_cliente".equalsIgnoreCase(statusAtual)) {
                 System.err.println("ERRO: Reserva não pode ser cancelada. Status atual: " + statusAtual);
@@ -90,12 +84,11 @@ public class ReservaController {
         }
     }
     
-    // Método para ser usado pelo LocacaoController quando uma reserva vira locação
     public boolean utilizarReserva(int idReserva) {
         try {
             Reserva reserva = reservaDAO.buscarPorId(idReserva);
             if (reserva == null) {
-                return false; // Não encontrou, LocacaoController tratará
+                return false;
             }
             reserva.setStatusReserva("utilizada");
             reservaDAO.atualizar(reserva);

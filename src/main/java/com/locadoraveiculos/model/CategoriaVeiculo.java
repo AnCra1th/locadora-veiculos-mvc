@@ -2,9 +2,7 @@ package com.locadoraveiculos.model;
 
 import java.math.BigDecimal;
 
-/**
- * Representa a entidade CategoriaVeiculo.
- */
+
 public class CategoriaVeiculo {
     private int idCategoriaVeiculo;
     private String nomeCategoria;

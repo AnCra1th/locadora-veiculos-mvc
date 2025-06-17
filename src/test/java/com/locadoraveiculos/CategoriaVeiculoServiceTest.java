@@ -32,14 +32,14 @@ public class CategoriaVeiculoServiceTest {
     @Test
     @DisplayName("Não deve adicionar categoria com nome inválido")
     void testAdicionarCategoriaInvalida() {
-        categoriaValida.setNomeCategoria(""); // Nome inválido
+        categoriaValida.setNomeCategoria("");
         Assertions.assertFalse(service.adicionarCategoria(categoriaValida));
     }
     
     @Test
     @DisplayName("Não deve adicionar categoria com valor da diária inválido")
     void testAdicionarCategoriaComDiariaInvalida() {
-        categoriaValida.setValorDiariaBase(BigDecimal.ZERO); // Valor inválido
+        categoriaValida.setValorDiariaBase(BigDecimal.ZERO);
         Assertions.assertFalse(service.adicionarCategoria(categoriaValida));
     }
 }

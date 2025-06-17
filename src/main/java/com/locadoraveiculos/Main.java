@@ -22,19 +22,16 @@ import java.util.List;
 import java.util.Scanner;
 import java.sql.SQLException;
 
-/**
- * Classe principal para interação com o sistema de locadora via console.
- * Atua como a camada de "View" (Visão) da aplicação.
- */
+
 public class Main {
-    // Instanciação de todos os controllers necessários para a aplicação
+    
     private static ClienteController clienteController = new ClienteController();
     private static VeiculoController veiculoController = new VeiculoController();
     private static LocacaoController locacaoController = new LocacaoController();
     private static CategoriaVeiculoController categoriaVeiculoController = new CategoriaVeiculoController();
     private static ReservaController reservaController = new ReservaController();
 
-    // Utilitários para entrada de dados e formatação de datas
+    
     private static Scanner scanner = new Scanner(System.in);
     private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     private static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -43,14 +40,14 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Bem-vindo ao Sistema de Locadora de Veículos!");
         try {
-            // Tenta estabelecer a conexão com o banco de dados na inicialização
+            
             DatabaseConnection.getConnection();
             System.out.println("INFO: Conexão com o banco de dados estabelecida.");
         } catch (SQLException e) {
             System.err.println("FALHA CRÍTICA: Não foi possível conectar ao banco de dados. Verifique as configurações e o servidor MySQL.");
             System.err.println("Detalhes do erro: " + e.getMessage());
             System.err.println("A aplicação será encerrada.");
-            return; // Encerra a aplicação se não conseguir conectar
+            return; 
         }
 
         int opcao;
@@ -66,10 +63,10 @@ public class Main {
                     menuVeiculos();
                     break;
                 case 3:
-                    menuReservas(); // Nova opção
+                    menuReservas(); 
                     break;
                 case 4:
-                    menuLocacoes(); // Ordem ajustada
+                    menuLocacoes();
                     break;
                 case 0:
                     System.out.println("Encerrando o Sistema...");
@@ -79,7 +76,7 @@ public class Main {
             }
             if (opcao != 0) {
                 System.out.println("\nPressione Enter para continuar...");
-                scanner.nextLine(); // Pausa para o usuário ler a saída antes de mostrar o menu novamente
+                scanner.nextLine(); 
             }
         } while (opcao != 0);
 
@@ -88,7 +85,7 @@ public class Main {
         System.out.println("INFO: Conexão com o banco de dados fechada. Sistema encerrado.");
     }
 
-    // --- MÉTODOS DE UTILIDADE PARA ENTRADA DE DADOS ---
+   
 
     private static String lerString(String prompt) {
         System.out.print(prompt);
@@ -112,8 +109,8 @@ public class Main {
             try {
                 System.out.print(prompt);
                 String input = scanner.nextLine();
-                if (input.trim().isEmpty()) return null; // Permite entrada vazia para campos opcionais
-                return new BigDecimal(input.replace(",", ".")); // Aceita vírgula como separador decimal
+                if (input.trim().isEmpty()) return null; 
+                return new BigDecimal(input.replace(",", ".")); 
             } catch (NumberFormatException e) {
                 System.out.println("Entrada inválida. Por favor, insira um número decimal (ex: 150.75).");
             }
@@ -124,7 +121,7 @@ public class Main {
         while (true) {
             System.out.print(prompt);
             String input = scanner.nextLine();
-            if (input.trim().isEmpty()) return null; // Permite entrada vazia para campos opcionais
+            if (input.trim().isEmpty()) return null; 
             try {
                 return sdf.parse(input);
             } catch (ParseException e) {
@@ -133,7 +130,7 @@ public class Main {
         }
     }
 
-    // --- MENUS PRINCIPAIS E SUB-MENUS ---
+    
 
     private static void exibirMenuPrincipal() {
         System.out.println("\n--- MENU PRINCIPAL ---");
@@ -144,7 +141,7 @@ public class Main {
         System.out.println("0. Sair");
     }
 
-    // --- SEÇÃO DE CLIENTES ---
+  
     private static void menuClientes() {
         int opcao;
         do {
@@ -224,7 +221,7 @@ public class Main {
         clienteController.excluirCliente(id);
     }
 
-    // --- SEÇÃO DE VEÍCULOS ---
+    
     private static void menuVeiculos() {
         int opcao;
         do {
@@ -314,7 +311,7 @@ public class Main {
         veiculoController.excluirVeiculo(placa);
     }
 
-    // --- SEÇÃO DE RESERVAS ---
+    
     private static void menuReservas() {
         int opcao;
         do {
@@ -396,7 +393,7 @@ public class Main {
         reservaController.cancelarReserva(id);
     }
 
-    // --- SEÇÃO DE LOCAÇÕES ---
+    
     private static void menuLocacoes() {
         int opcao;
         do {

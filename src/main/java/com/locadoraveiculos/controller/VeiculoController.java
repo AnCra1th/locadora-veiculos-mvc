@@ -28,7 +28,7 @@ public class VeiculoController {
                 System.err.println("Erro de validação: Marca do veículo não pode ser vazia.");
                 return false;
             }
-            if (veiculo.getIdCategoriaVeiculo() == 0) { // Supondo que 0 é inválido
+            if (veiculo.getIdCategoriaVeiculo() == 0) {
                 System.err.println("Erro de validação: ID da categoria do veículo é inválido.");
                 return false;
             }
@@ -70,7 +70,6 @@ public class VeiculoController {
                 System.err.println("Erro de validação: Placa do veículo inválida para atualização.");
                 return false;
             }
-            // Adicionar outras validações para campos obrigatórios
             veiculoDAO.atualizar(veiculo);
             System.out.println("INFO: Veículo placa '" + veiculo.getPlaca() + "' atualizado com sucesso!");
             return true;

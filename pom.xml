@@ -33,7 +33,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JUnit 5 Engine -->
+        <!-- JUnit 5-->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>

@@ -2,15 +2,13 @@ package com.locadoraveiculos.model;
 
 import java.util.Date;
 
-/**
- * Representa a entidade Cliente.
- */
+
 public class Cliente {
     private int idCliente;
     private String nome;
     private String cpf;
     private String cnh;
-    private Date dataValidadeCnh; // java.util.Date
+    private Date dataValidadeCnh; 
     private String telefone;
     private String email;
     private String enderecoRua;

@@ -3,15 +3,13 @@ package com.locadoraveiculos.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
-/**
- * Representa a entidade Reserva.
- */
+
 public class Reserva {
     private int idReserva;
     private int idCliente;
     private int idCategoriaVeiculo;
-    private Integer idFuncionario; // Pode ser nulo
-    private Date dataReserva; // O banco de dados define um default
+    private Integer idFuncionario; 
+    private Date dataReserva; 
     private Date dataPrevistaRetirada;
     private Date dataPrevistaDevolucao;
     private BigDecimal valorEstimado;

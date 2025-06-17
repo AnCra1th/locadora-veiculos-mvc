@@ -19,7 +19,7 @@ services:
       - locadora_app_network
 
 volumes:
-  dados_db_locadora: # Define o volume nomeado para os dados
+  dados_db_locadora: 
 
 networks:
   locadora_app_network:

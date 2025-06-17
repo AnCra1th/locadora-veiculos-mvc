@@ -1,14 +1,12 @@
 package com.locadoraveiculos.model;
 
-/**
- * Representa a entidade Veiculo.
- */
+
 public class Veiculo {
     private String placa;
     private int idCategoriaVeiculo;
     private String modelo;
     private String marca;
-    private Integer anoFabricacao; // Pode ser nulo
+    private Integer anoFabricacao; 
     private String cor;
     private String chassi;
     private String renavam;

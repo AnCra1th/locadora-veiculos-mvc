@@ -21,7 +21,7 @@ public class LocacaoServiceTest {
         dao = Mockito.mock(LocacaoDAO.class);
         service = new LocacaoService(dao);
         
-        // Usa o construtor correto da Locacao para criar um objeto válido
+        
         locacaoValida = new Locacao(1, "ABC1234", 1, new Date(), new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(2)), new BigDecimal("150.0"));
     }
 
@@ -29,14 +29,14 @@ public class LocacaoServiceTest {
     @DisplayName("Deve registrar uma locação com dados válidos")
     void testRegistrarLocacaoValida() {
         Assertions.assertTrue(service.registrarLocacao(locacaoValida));
-        // Verifica se o método 'salvar' do DAO foi chamado
+        
         Mockito.verify(dao).salvar(locacaoValida);
     }
 
     @Test
     @DisplayName("Não deve registrar locação com placa de veículo nula")
     void testRegistrarLocacaoInvalida() {
-        locacaoValida.setPlacaVeiculo(null); // Placa inválida
+        locacaoValida.setPlacaVeiculo(null); 
         Assertions.assertFalse(service.registrarLocacao(locacaoValida));
     }
     

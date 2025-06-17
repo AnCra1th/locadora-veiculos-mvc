@@ -2,19 +2,17 @@ package com.locadoraveiculos.controller;
 
 import com.locadoraveiculos.dao.LocacaoDAO;
 import com.locadoraveiculos.dao.VeiculoDAO;
-import com.locadoraveiculos.dao.ClienteDAO; // Para verificar se cliente existe
+import com.locadoraveiculos.dao.ClienteDAO;
 import com.locadoraveiculos.exception.PersistenceException;
 import com.locadoraveiculos.model.Locacao;
 import com.locadoraveiculos.model.Veiculo;
 import com.locadoraveiculos.model.Cliente;
-
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
 
 public class LocacaoController {
     private LocacaoDAO locacaoDAO;
@@ -29,7 +27,6 @@ public class LocacaoController {
 
     public boolean registrarLocacao(Locacao locacao) {
         try {
-            // Validações de Negócio:
             Cliente cliente = clienteDAO.buscarPorId(locacao.getIdCliente());
             if (cliente == null) {
                 System.err.println("Erro ao registrar locação: Cliente com ID " + locacao.getIdCliente() + " não encontrado.");
@@ -61,19 +58,16 @@ public class LocacaoController {
                 return false;
             }
 
-            // Calcular valor total previsto (simples, sem considerar seguro, etc. por enquanto)
             long diffInMillies = Math.abs(locacao.getDataPrevistaDevolucao().getTime() - locacao.getDataRetirada().getTime());
             long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-            if (diffInDays == 0) diffInDays = 1; // Mínimo 1 dia de locação
+            if (diffInDays == 0) diffInDays = 1;
             
             BigDecimal dias = new BigDecimal(diffInDays);
             locacao.setValorTotalPrevisto(locacao.getValorDiariaLocacao().multiply(dias));
 
-
-            locacao.setStatusLocacao("ativa"); // Garante o status inicial
+            locacao.setStatusLocacao("ativa");
             locacaoDAO.salvar(locacao);
 
-            // Atualiza o status do veículo para "locado"
             veiculo.setStatusVeiculo("locado");
             veiculoDAO.atualizar(veiculo);
 
@@ -84,7 +78,7 @@ public class LocacaoController {
         } catch (PersistenceException e) {
             System.err.println("ERRO Controller: Erro ao registrar locação: " + e.getMessage());
             return false;
-        } catch (Exception e) { // Captura outras exceções inesperadas
+        } catch (Exception e) {
             System.err.println("ERRO Controller: Erro inesperado ao registrar locação: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -131,9 +125,8 @@ public class LocacaoController {
 
             locacao.setDataEfetivaDevolucao(dataEfetivaDevolucao);
             locacao.setObservacoesDevolucao(observacoesDevolucao);
-            locacao.setStatusLocacao("finalizada"); // Ou "finalizada_com_pendencia" dependendo da lógica de multa
+            locacao.setStatusLocacao("finalizada");
 
-            // Lógica de cálculo de multa e valor final (simplificada)
             long diffPrevistaMillis = Math.abs(locacao.getDataPrevistaDevolucao().getTime() - locacao.getDataRetirada().getTime());
             long diasPrevistos = TimeUnit.DAYS.convert(diffPrevistaMillis, TimeUnit.MILLISECONDS);
             if(diasPrevistos == 0) diasPrevistos = 1;
@@ -144,25 +137,22 @@ public class LocacaoController {
             
             BigDecimal valorBase = locacao.getValorDiariaLocacao().multiply(new BigDecimal(diasEfetivos));
             
-            // Cálculo de multa simples se devolveu depois do previsto
             if (dataEfetivaDevolucao.after(locacao.getDataPrevistaDevolucao())) {
                 long diasAtrasoMillis = Math.abs(dataEfetivaDevolucao.getTime() - locacao.getDataPrevistaDevolucao().getTime());
                 long diasAtraso = TimeUnit.DAYS.convert(diasAtrasoMillis, TimeUnit.MILLISECONDS);
-                // Supondo uma multa de 20% da diária por dia de atraso
                 BigDecimal multaPorDia = locacao.getValorDiariaLocacao().multiply(new BigDecimal("0.20"));
                 locacao.setValorMultaAtraso(multaPorDia.multiply(new BigDecimal(diasAtraso)));
             } else {
                 locacao.setValorMultaAtraso(BigDecimal.ZERO);
             }
             
-            locacao.setValorTotalFinal(valorBase.add(locacao.getValorMultaAtraso()).add(locacao.getValorSeguro())); // Adicionar caução se aplicável e depois reembolsar diferença
+            locacao.setValorTotalFinal(valorBase.add(locacao.getValorMultaAtraso()).add(locacao.getValorSeguro()));
 
             locacaoDAO.atualizar(locacao);
 
-            // Atualizar status do veículo
             Veiculo veiculo = veiculoDAO.buscarPorPlaca(locacao.getPlacaVeiculo());
             if (veiculo != null) {
-                veiculo.setStatusVeiculo("disponivel"); // Ou "manutencao" dependendo das observações
+                veiculo.setStatusVeiculo("disponivel");
                 veiculoDAO.atualizar(veiculo);
             }
             System.out.println("INFO: Locação ID " + idLocacao + " finalizada. Valor final: " + locacao.getValorTotalFinal());

@@ -14,7 +14,7 @@ public class LocacaoDAO {
         String sql = "INSERT INTO locacao (id_cliente, placa_veiculo, id_funcionario_retirada, " +
                      "data_retirada, data_prevista_devolucao, valor_diaria_locacao, status_locacao, " +
                      "valor_caucao, valor_seguro, observacoes_retirada, id_reserva, " +
-                     "valor_multa_atraso, valor_total_previsto) " + // Adicionado id_reserva e outros
+                     "valor_multa_atraso, valor_total_previsto) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseConnection.getConnection();
@@ -38,7 +38,6 @@ public class LocacaoDAO {
             }
             pstmt.setBigDecimal(12, locacao.getValorMultaAtraso());
             pstmt.setBigDecimal(13, locacao.getValorTotalPrevisto());
-
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
@@ -140,7 +139,6 @@ public class LocacaoDAO {
             pstmt.setString(2, locacao.getPlacaVeiculo());
             pstmt.setInt(3, locacao.getIdFuncionarioRetirada());
 
-
             if (locacao.getIdFuncionarioDevolucao() != null) {
                 pstmt.setInt(4, locacao.getIdFuncionarioDevolucao());
             } else {
@@ -169,7 +167,6 @@ public class LocacaoDAO {
             pstmt.setString(17, locacao.getObservacoesDevolucao());
             pstmt.setInt(18, locacao.getIdLocacao());
             
-
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
                 throw new PersistenceException("Falha ao atualizar locação, ID " + locacao.getIdLocacao() + " não encontrado ou dados inalterados.");

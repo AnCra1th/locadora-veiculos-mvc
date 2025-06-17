@@ -10,97 +10,71 @@ import java.util.List;
 
 public class VeiculoDAO {
 
-    // Dentro da classe com.locadoraveiculos.dao.VeiculoDAO
+    public void salvar(Veiculo veiculo) {
+        String sql = "INSERT INTO veiculo (placa, id_categoria_veiculo, modelo, marca, ano_fabricacao, " +
+                     "cor, chassi, renavam, status_veiculo, observacoes) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-public void salvar(Veiculo veiculo) {
-    String sql = "INSERT INTO veiculo (placa, id_categoria_veiculo, modelo, marca, ano_fabricacao, " +
-                 "cor, chassi, renavam, status_veiculo, observacoes) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-    try (Connection conn = DatabaseConnection.getConnection();
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-        // Logs de depuração foram removidos/comentados para uma saída mais limpa.
-        // Se precisar depurar novamente, você pode descomentá-los:
-        /*
-        System.out.println("--- [VeiculoDAO.salvar] Preparando para salvar Veículo ---");
-        System.out.println("Placa (objeto):         [" + (veiculo.getPlaca() != null ? veiculo.getPlaca() : "NULL") + "]");
-        System.out.println("ID Categoria (objeto):  [" + veiculo.getIdCategoriaVeiculo() + "]");
-        System.out.println("Modelo (objeto):        [" + (veiculo.getModelo() != null ? veiculo.getModelo() : "NULL") + "]");
-        System.out.println("Marca (objeto):         [" + (veiculo.getMarca() != null ? veiculo.getMarca() : "NULL") + "]");
-        System.out.println("Ano Fab. (objeto):      [" + (veiculo.getAnoFabricacao() != null ? veiculo.getAnoFabricacao() : "NULL") + "]");
-        System.out.println("Cor (objeto):           [" + (veiculo.getCor() != null ? veiculo.getCor() : "NULL") + "]");
-        System.out.println("Chassi (objeto):        [" + (veiculo.getChassi() != null ? veiculo.getChassi() : "NULL") + "]");
-        System.out.println("Renavam (objeto):       [" + (veiculo.getRenavam() != null ? veiculo.getRenavam() : "NULL") + "]");
-        System.out.println("Status (objeto):        [" + (veiculo.getStatusVeiculo() != null ? veiculo.getStatusVeiculo() : "NULL") + "]");
-        System.out.println("Observações (objeto):   [" + (veiculo.getObservacoes() != null ? veiculo.getObservacoes() : "NULL") + "]");
-        System.out.println("------------------------------------------------------");
-        */
-
-        if (veiculo.getPlaca() == null || veiculo.getPlaca().trim().isEmpty()) {
-            // Esta exceção é mais para um erro de programação interno, não diretamente para o usuário.
-            throw new PersistenceException("Validação interna falhou: Placa não pode ser nula ou vazia ao tentar salvar no DAO.");
-        }
-        pstmt.setString(1, veiculo.getPlaca().trim().toUpperCase());
-
-        pstmt.setInt(2, veiculo.getIdCategoriaVeiculo());
-        pstmt.setString(3, veiculo.getModelo());
-        pstmt.setString(4, veiculo.getMarca());
-
-        if (veiculo.getAnoFabricacao() != null) {
-            pstmt.setInt(5, veiculo.getAnoFabricacao());
-        } else {
-            pstmt.setNull(5, Types.INTEGER);
-        }
-
-        pstmt.setString(6, veiculo.getCor());
-
-        String chassi = veiculo.getChassi();
-        if (chassi != null && !chassi.trim().isEmpty()) {
-            pstmt.setString(7, chassi.trim().toUpperCase());
-        } else {
-            pstmt.setNull(7, Types.VARCHAR);
-        }
-
-        String renavam = veiculo.getRenavam();
-        if (renavam != null && !renavam.trim().isEmpty()) {
-            pstmt.setString(8, renavam.trim().toUpperCase());
-        } else {
-            pstmt.setNull(8, Types.VARCHAR);
-        }
-
-        pstmt.setString(9, veiculo.getStatusVeiculo());
-        pstmt.setString(10, veiculo.getObservacoes());
-
-        // System.out.println("--- [VeiculoDAO.salvar] Executando INSERT SQL ---"); // Log de depuração
-        int affectedRows = pstmt.executeUpdate();
-        // System.out.println("--- [VeiculoDAO.salvar] Linhas afetadas: " + affectedRows + " ---"); // Log de depuração
-
-        if (affectedRows == 0) {
-            throw new PersistenceException("Falha ao salvar veículo, nenhuma linha afetada. Verifique os dados.");
-        }
-
-    } catch (SQLException e) {
-        String detailedErrorMessage = e.getMessage();
-        String sqlState = e.getSQLState();
-        int errorCode = e.getErrorCode();
-
-        
-
-        if ("23000".equals(sqlState)) {
-            if (errorCode == 1062 || (detailedErrorMessage != null && detailedErrorMessage.toLowerCase().contains("duplicate entry"))) {
-               
-                throw new PersistenceException("Não foi possível salvar o veículo: Já existe um veículo com a mesma Placa, Chassi ou Renavam.", e);
-            } else if (errorCode == 1452) {
-                throw new PersistenceException("Não foi possível salvar o veículo: A Categoria do Veículo informada não existe.", e);
-            } else {
-                throw new PersistenceException("Não foi possível salvar o veículo devido a um problema de integridade dos dados. [Detalhe DB: " + detailedErrorMessage + "]", e);
+            if (veiculo.getPlaca() == null || veiculo.getPlaca().trim().isEmpty()) {
+                throw new PersistenceException("Validação interna falhou: Placa não pode ser nula ou vazia ao tentar salvar no DAO.");
             }
-        }
-        throw new PersistenceException("Ocorreu um erro inesperado ao tentar salvar o veículo. Por favor, tente novamente. [Detalhe DB: " + detailedErrorMessage + "]", e);
-    }
-}
+            pstmt.setString(1, veiculo.getPlaca().trim().toUpperCase());
 
+            pstmt.setInt(2, veiculo.getIdCategoriaVeiculo());
+            pstmt.setString(3, veiculo.getModelo());
+            pstmt.setString(4, veiculo.getMarca());
+
+            if (veiculo.getAnoFabricacao() != null) {
+                pstmt.setInt(5, veiculo.getAnoFabricacao());
+            } else {
+                pstmt.setNull(5, Types.INTEGER);
+            }
+
+            pstmt.setString(6, veiculo.getCor());
+
+            String chassi = veiculo.getChassi();
+            if (chassi != null && !chassi.trim().isEmpty()) {
+                pstmt.setString(7, chassi.trim().toUpperCase());
+            } else {
+                pstmt.setNull(7, Types.VARCHAR);
+            }
+
+            String renavam = veiculo.getRenavam();
+            if (renavam != null && !renavam.trim().isEmpty()) {
+                pstmt.setString(8, renavam.trim().toUpperCase());
+            } else {
+                pstmt.setNull(8, Types.VARCHAR);
+            }
+
+            pstmt.setString(9, veiculo.getStatusVeiculo());
+            pstmt.setString(10, veiculo.getObservacoes());
+
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new PersistenceException("Falha ao salvar veículo, nenhuma linha afetada. Verifique os dados.");
+            }
+
+        } catch (SQLException e) {
+            String detailedErrorMessage = e.getMessage();
+            String sqlState = e.getSQLState();
+            int errorCode = e.getErrorCode();
+
+            if ("23000".equals(sqlState)) {
+                if (errorCode == 1062 || (detailedErrorMessage != null && detailedErrorMessage.toLowerCase().contains("duplicate entry"))) {
+                    throw new PersistenceException("Não foi possível salvar o veículo: Já existe um veículo com a mesma Placa, Chassi ou Renavam.", e);
+                } else if (errorCode == 1452) {
+                    throw new PersistenceException("Não foi possível salvar o veículo: A Categoria do Veículo informada não existe.", e);
+                } else {
+                    throw new PersistenceException("Não foi possível salvar o veículo devido a um problema de integridade dos dados. [Detalhe DB: " + detailedErrorMessage + "]", e);
+                }
+            }
+            throw new PersistenceException("Ocorreu um erro inesperado ao tentar salvar o veículo. Por favor, tente novamente. [Detalhe DB: " + detailedErrorMessage + "]", e);
+        }
+    }
 
     public Veiculo buscarPorPlaca(String placa) {
         String sql = "SELECT * FROM veiculo WHERE placa = ?";
@@ -200,7 +174,7 @@ public void salvar(Veiculo veiculo) {
                 System.out.println("Aviso: Nenhuma linha afetada ao tentar excluir veículo placa: " + placa + ". Veículo pode não existir.");
             }
         } catch (SQLException e) {
-            if (e.getSQLState().startsWith("23")) { // Integrity constraint violation
+            if (e.getSQLState().startsWith("23")) {
                 throw new PersistenceException("Não é possível excluir o veículo placa '" + placa + "' pois ele possui registros associados (ex: locações).", e);
             }
             throw new PersistenceException("Erro ao excluir veículo placa '" + placa + "': " + e.getMessage(), e);

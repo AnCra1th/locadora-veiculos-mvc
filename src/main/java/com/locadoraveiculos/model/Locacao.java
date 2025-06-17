@@ -1,33 +1,31 @@
 package com.locadoraveiculos.model;
 
 import java.math.BigDecimal;
-import java.util.Date; // Usaremos java.util.Date para simplicidade, convertendo para SQL na DAO
+import java.util.Date; 
 
-/**
- * Representa a entidade Locacao.
- */
+
 public class Locacao {
     private int idLocacao;
     private int idCliente;
     private String placaVeiculo;
     private int idFuncionarioRetirada;
-    private Integer idFuncionarioDevolucao; // Pode ser nulo
-    private Integer idReserva; // Pode ser nulo
+    private Integer idFuncionarioDevolucao; 
+    private Integer idReserva; 
     private Date dataRetirada;
     private Date dataPrevistaDevolucao;
-    private Date dataEfetivaDevolucao; // Pode ser nulo
+    private Date dataEfetivaDevolucao; 
     private BigDecimal valorDiariaLocacao;
     private BigDecimal valorCaucao;
     private BigDecimal valorSeguro;
     private BigDecimal valorMultaAtraso;
     private BigDecimal valorTotalPrevisto;
-    private BigDecimal valorTotalFinal; // Pode ser nulo
+    private BigDecimal valorTotalFinal; 
     private String statusLocacao;
     private String observacoesRetirada;
     private String observacoesDevolucao;
 
     public Locacao() {
-        // Inicializar BigDecimals para evitar NullPointerException se não forem setados e usados em cálculos
+        
         this.valorDiariaLocacao = BigDecimal.ZERO;
         this.valorCaucao = BigDecimal.ZERO;
         this.valorSeguro = BigDecimal.ZERO;
@@ -35,14 +33,14 @@ public class Locacao {
     }
 
     public Locacao(int idCliente, String placaVeiculo, int idFuncionarioRetirada, Date dataRetirada, Date dataPrevistaDevolucao, BigDecimal valorDiariaLocacao) {
-        this(); // Chama o construtor padrão para inicializar BigDecimals
+        this(); 
         this.idCliente = idCliente;
         this.placaVeiculo = placaVeiculo;
         this.idFuncionarioRetirada = idFuncionarioRetirada;
         this.dataRetirada = dataRetirada;
         this.dataPrevistaDevolucao = dataPrevistaDevolucao;
         this.valorDiariaLocacao = valorDiariaLocacao;
-        this.statusLocacao = "ativa"; // Default
+        this.statusLocacao = "ativa"; 
     }
 
     // Getters e Setters

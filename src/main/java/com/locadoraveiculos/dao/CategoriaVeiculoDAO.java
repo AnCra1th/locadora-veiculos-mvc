@@ -8,16 +8,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DAO para a entidade CategoriaVeiculo.
- * Esta classe é necessária para dar suporte à aplicação e aos testes.
- */
 public class CategoriaVeiculoDAO {
 
-    /**
-     * Salva uma nova categoria de veículo no banco de dados.
-     * @param categoria O objeto CategoriaVeiculo a ser salvo.
-     */
     public void salvar(CategoriaVeiculo categoria) {
         String sql = "INSERT INTO categoria_veiculo (nome_categoria, descricao, valor_diaria_base) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseConnection.getConnection();
@@ -44,11 +36,6 @@ public class CategoriaVeiculoDAO {
         }
     }
 
-    /**
-     * Busca uma categoria de veículo pelo seu ID.
-     * @param id O ID da categoria a ser buscada.
-     * @return O objeto CategoriaVeiculo encontrado, ou null se não existir.
-     */
     public CategoriaVeiculo buscarPorId(int id) {
          String sql = "SELECT * FROM categoria_veiculo WHERE id_categoria_veiculo = ?";
          CategoriaVeiculo categoria = null;
@@ -70,10 +57,6 @@ public class CategoriaVeiculoDAO {
         return categoria;
     }
 
-    /**
-     * Lista todas as categorias de veículo cadastradas.
-     * @return Uma lista de objetos CategoriaVeiculo.
-     */
     public List<CategoriaVeiculo> listarTodas() {
         String sql = "SELECT * FROM categoria_veiculo ORDER BY nome_categoria";
         List<CategoriaVeiculo> categorias = new ArrayList<>();
@@ -95,5 +78,4 @@ public class CategoriaVeiculoDAO {
         return categorias;
     }
 
-    // Outros métodos como atualizar e excluir podem ser adicionados aqui se necessário.
 }
