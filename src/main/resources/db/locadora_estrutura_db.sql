@@ -215,12 +215,12 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- Adiciona dados iniciais para que a aplicação não comece vazia.
 -- -----------------------------------------------------
 INSERT INTO `categoria_veiculo` (`nome_categoria`, `descricao`, `valor_diaria_base`) VALUES
-('Popular', 'Veículos econômicos que cabem no seu bolso', 100.00),
-('Executivo', 'Veículos executivos confortáveis e profissionais', 250.00),
-('SUV', 'Veículos utilitários esportivos para toda a família', 300.00);
+('Popular', 'Veiculos economicos que cabem no seu bolso', 100.00),
+('Executivo', 'Veiculos executivos confortaveis e profissionais', 250.00),
+('SUV', 'Veiculos utilitarios esportivos para toda a familia', 300.00);
 
 INSERT INTO `funcionario` (`nome`, `cpf`, `telefone`, `email`) VALUES
-('Geraldo de Rívia', '11122233344', '11999998888', 'geraldo.rivia@locadora.com'),
+('Geraldo de Rivia', '11122233344', '11999998888', 'geraldo.rivia@locadora.com'),
 ('Eva Lakatos', '55566677788', '11977776666', 'eva.lakatos@locadora.com');
 
 -- Dump completed on 2025-05-22 23:25:31

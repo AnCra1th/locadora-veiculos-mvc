@@ -1,7 +1,7 @@
 services:
-  db_locadora: # Nome do serviço do banco de dados
+  db_locadora: # Nome do servico do banco de dados
     image: mysql:latest
-    container_name: locadora_mysql_db # Nome do contêiner
+    container_name: locadora_mysql_db # Nome do conteiner
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: root 
